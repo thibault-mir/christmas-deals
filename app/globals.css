@@ -1,26 +1,676 @@
-@import "tailwindcss";
+/* app/globals.css */
+@import url("//fonts.googleapis.com/css?family=Fredoka+One&amp;display=swap%7COpen+Sans:300,400,600,700,800&amp;display=swap");
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+html {
+  scroll-behavior: smooth;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Reset et styles de base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  font-family: "Open Sans", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  background: #013932;
+  color: #fff;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Fond vert + léger dégradé */
+/* Remplacer .login-bg dans ton globals.css */
+.login-bg {
+  position: fixed;
+  inset: 0;
+  background: url("/images/background.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: -2;
+}
+
+/* Wrapper global */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header simple assorti à ta home */
+.login-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 40px;
+  font-family: "Fredoka One", cursive;
+}
+
+.login-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.login-logo {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #00c9a7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.login-brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+  font-size: 18px;
+}
+
+.login-brand-text span:nth-child(2) {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.login-header a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.login-header a:hover {
+  text-decoration: underline;
+}
+
+/* Zone centrale avec la carte de login */
+.login-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px 60px;
+}
+
+.login-card {
+  background: rgba(2, 37, 34, 0.82);
+  border-radius: 24px;
+  padding: 40px 32px 32px;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.login-title {
+  font-family: "Fredoka One", cursive;
+  font-size: 32px;
+  margin: 0 0 6px;
+}
+
+.login-subtitle {
+  font-size: 14px;
+  margin: 0 0 24px;
+  opacity: 0.9;
+}
+
+.login-form-group {
+  margin-bottom: 18px;
+}
+
+.login-label {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 6px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+.login-input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(3, 54, 48, 0.9);
+  color: #fff;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease,
+    background 0.15s ease;
+}
+
+.login-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.login-input:focus {
+  border-color: #00c9a7;
+  box-shadow: 0 0 0 1px #00c9a7;
+  background: rgba(3, 64, 56, 0.98);
+}
+
+.login-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 22px;
+  font-size: 13px;
+}
+
+.login-remember {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.login-remember input[type="checkbox"] {
+  accent-color: #00c9a7;
+}
+
+.login-forgot {
+  text-decoration: none;
+  color: #ffffff;
+  opacity: 0.9;
+}
+
+.login-forgot:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.login-button {
+  display: inline-block;
+  width: 100%;
+  border: none;
+  border-radius: 999px;
+  padding: 12px 20px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: "Fredoka One", cursive;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  background: linear-gradient(120deg, #ff4c73, #ff9552);
+  color: #fff;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+  transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.1s ease;
+}
+
+.login-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  filter: brightness(1.05);
+}
+
+.login-button:active {
+  transform: translateY(1px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.45);
+}
+
+.login-footer-text {
+  margin-top: 18px;
+  font-size: 13px;
+  text-align: center;
+  opacity: 0.85;
+}
+
+.login-footer-text a {
+  color: #00c9a7;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.login-footer-text a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .login-header {
+    padding: 16px 18px;
+  }
+
+  .login-card {
+    padding: 28px 20px 24px;
+    border-radius: 20px;
+  }
+
+  .login-title {
+    font-size: 26px;
+  }
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+/* Styles NAVBAR */
+/* NAVBAR FLOTTANTE */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  z-index: 1000;
+  background: transparent;
+  backdrop-filter: blur(0px);
+  transition: background 0.25s ease, box-shadow 0.25s ease,
+    backdrop-filter 0.25s ease;
+}
+
+.navbar-scrolled {
+  background: #013932;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
+/* CONTAINER RESPONSIVE FULL WIDTH */
+.nav-container {
+  width: 100%;
+  padding: 0 40px; /* identique au login */
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+}
+
+/* LOGO (gauche) */
+.nav-logo img {
+  display: block;
+  width: 222px; /* identique au login */
+  height: auto;
+}
+
+/* MENU (droite) */
+.nav-menu {
+  margin-left: auto; /* ← pousse totalement à droite */
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+}
+
+.nav-link {
+  font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 17px;
+  font-weight: 400;
+  position: relative;
+  color: #ffffff;
+  padding: 0.4rem 0;
+  opacity: 0.9;
+  transition: opacity 0.2s ease;
+  text-decoration: none;
+  text-decoration-line: none;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  height: 2px;
+  width: 0;
+  background: #00c9a7;
+  transition: width 0.5s ease;
+}
+
+.nav-link:hover {
+  opacity: 1;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* Lien actif = liseré toujours visible */
+.nav-link-active {
+  opacity: 1;
+}
+
+.nav-link-active::after {
+  width: 100%;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .nav-container {
+    padding: 0 20px;
+  }
+
+  /* Le burger apparaît */
+  .nav-toggle {
+    display: block !important; /* FORCE, obligatoire */
+  }
+
+  /* MENU MOBILE ANIMÉ */
+  .nav-menu {
+    position: absolute;
+    top: 90px; /* hauteur de ta navbar */
+    left: 0;
+    right: 0;
+    background: #013932;
+    padding: 0 20px 0; /* padding vertical animé avec le max-height */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    flex-direction: column;
+    gap: 1rem;
+
+    /* Animation state "fermée" */
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-8px);
+    overflow: hidden;
+    pointer-events: none;
+
+    transition: max-height 0.25s ease, opacity 0.2s ease, transform 0.25s ease;
+  }
+
+  /* State "ouverte" */
+  .nav-menu.nav-menu-open {
+    max-height: 260px; /* à ajuster si tu rajoutes des liens */
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+    padding: 12px 20px 18px;
+  }
+
+  .nav-link {
+    font-size: 18px;
+    padding: 10px 0;
+  }
+
+  .nav-logo img {
+    width: 180px;
+    height: auto;
+  }
+}
+
+@media (max-width: 560px) {
+  .nav-menu {
+    gap: 1rem;
+  }
+
+  .nav-link {
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+  }
+}
+
+/* ======== BURGER BUTTON ======== */
+
+.nav-toggle {
+  display: none; /* Desktop = caché */
+  margin-left: auto;
+  width: 32px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  position: relative;
+  z-index: 2000; /* TRÈS IMPORTANT: au-dessus de tout */
+}
+
+.nav-toggle span {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: 999px;
+  background: #ffffff;
+  transform-origin: center;
+  transition: transform 0.5s ease, opacity 0.5s ease, top 0.5s ease,
+    bottom 0.5s ease;
+}
+
+.nav-toggle span:nth-child(1) {
+  top: 0;
+}
+.nav-toggle span:nth-child(2) {
+  top: 50%;
+  transform: translateY(-50%);
+}
+.nav-toggle span:nth-child(3) {
+  bottom: 0;
+}
+
+/* Etat ouvert */
+.nav-toggle-open span:nth-child(1) {
+  top: 50%;
+  transform: translateY(-50%) rotate(45deg);
+}
+.nav-toggle-open span:nth-child(2) {
+  opacity: 0;
+}
+.nav-toggle-open span:nth-child(3) {
+  bottom: auto;
+  top: 50%;
+  transform: translateY(-50%) rotate(-45deg);
+}
+
+/* Fin NAVBAR */
+
+/* Sections globales */
+.section {
+  position: relative;
+  min-height: 100vh;
+  padding: 120px 40px 80px; /* 120px pour laisser la place à la navbar */
+  scroll-margin-top: 90px; /* pour les ancres */
+  display: flex;
+  align-items: center;
+}
+
+.section-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* HERO AVEC BACKGROUND.JPG */
+.section-hero {
+  color: #ffffff;
+  background-image: url("/images/background.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  /* petit overlay pour contraste texte */
+  isolation: isolate;
+}
+
+.section-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top, rgba(0, 0, 0, 0.4), transparent),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(1, 57, 50, 0.7));
+  z-index: -1;
+}
+
+.hero-title {
+  font-family: "Fredoka One", cursive;
+  font-size: 105px;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 0.83;
+  height: 182px;
+  margin-bottom: 16px;
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  max-width: 520px;
+  line-height: 1.6;
+  margin-bottom: 28px;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+/* boutons */
+.btn-primary,
+.btn-secondary {
+  display: inline-block;
+  padding: 12px 26px;
+  border-radius: 999px;
+  font-family: "Fredoka One", cursive;
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(120deg, #ff4c73, #ff9552);
+  color: #ffffff;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: #ffffff;
+  border: 2px solid #00c9a7;
+}
+
+/* hover */
+.btn-primary:hover,
+.btn-secondary:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+/* ABOUT : FOND BLANC */
+.section-about {
+  background: #ffffff;
+  color: #013932;
+}
+
+/* DEALS : ROUGE NOËL */
+.section-deals {
+  background: #8b0019; /* rouge Noël sombre */
+  color: #ffffff;
+}
+
+/* CELEBRATE : VERT PROFOND */
+.section-celebrate {
+  background: #022824;
+  color: #ffffff;
+}
+
+/* CONTACTS : PLUS SOMBRE / FOOTER-STYLE */
+.section-contacts {
+  background: #011816;
+  color: #ffffff;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .section {
+    padding: 110px 20px 60px;
+  }
+
+  .hero-title {
+    font-size: 4rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+}
+
+.section {
+  position: relative;
+  min-height: 100vh;
+  padding: 120px 40px 80px;
+  scroll-margin-top: 90px;
+  display: flex;
+  align-items: center;
+}
+
+.section-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* HERO AVEC BACKGROUND + NEIGE */
+.section-hero {
+  position: relative; /* important pour le mode "section" */
+  overflow: hidden;
+  color: #ffffff;
+  background-image: url("/images/background.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  isolation: isolate;
+}
+
+.section-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top, rgba(0, 0, 0, 0.4), transparent),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(1, 57, 50, 0.7));
+  z-index: -1; /* sous la neige */
+}
+
+/* pour être sûr que le texte passe au-dessus des flocons */
+.hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+.title-christmas span {
+  position: relative;
+}
+
+.title-christmas span img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(-47.7%, -35.2%);
+  max-width: 190%;
+}
+
+@media (max-width: 768px) {
+  .title-christmas span img {
+    max-width: 300%;
+    max-height: 155%;
+  }
+}
+
+@media (max-width: 1600px) and (min-width: 769px) {
+  .title-christmas span img {
+    max-width: 300%;
+    max-height: 155%;
+  }
+}
+
+@media (min-width: 1600px) {
+  .title-christmas span img {
+    max-width: none;
+  }
 }
