@@ -49,9 +49,13 @@ export async function POST(request: Request) {
       },
     });
   } catch (error: any) {
-    console.error("Erreur inscription:", error);
+    console.error("Error during registration:", error);
+
     return NextResponse.json(
-      { error: "Erreur lors de la création du compte" },
+      {
+        error: "Error during the creation of the account",
+        details: error?.message || String(error),
+      },
       { status: 500 }
     );
   }
