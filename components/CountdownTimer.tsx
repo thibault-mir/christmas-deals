@@ -66,11 +66,11 @@ const CountdownTimer = () => {
       <style jsx>{`
         .countdown {
           margin-top: 2rem;
+          margin-bottom: 2rem;
         }
 
         .countdown-grid {
           display: flex;
-          justify-content: center;
           gap: 3rem;
         }
 
@@ -79,15 +79,15 @@ const CountdownTimer = () => {
         }
 
         .countdown-number {
-          font-family: "Open Sans", sans-serif;
-          font-size: 3rem;
+          font-family: "Fredoka One", cursive;
+          font-size: 4rem;
           font-weight: 700;
           color: white;
-          margin-bottom: 0.5rem;
+          margin-bottom: 0.1rem;
         }
 
         .countdown-label {
-          font-family: "Open Sans", sans-serif;
+          font-family: "Fredoka One", cursive;
           font-size: 0.9rem;
           color: rgba(255, 255, 255, 0.8);
           text-transform: uppercase;

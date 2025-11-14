@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import ParticlesBackground from "@/components/ParticlesBackground";
 import Navbar from "@/components/NavBar";
+import CountdownTimer from "@/components/CountdownTimer";
 
 export default function Homepage() {
   const router = useRouter();
@@ -53,6 +54,7 @@ export default function Homepage() {
               Participate in exclusive auctions featuring items and objects
               available only to Servier employees.
             </p>
+            <CountdownTimer />
             <div className="hero-actions">
               <a href="#deals" className="btn-primary">
                 See Deals
