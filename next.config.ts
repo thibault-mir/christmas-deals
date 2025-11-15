@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
-  /* config options here */
+const nextConfig = {
+  // Rien du tout, config vide
 };
 
-export default nextConfig;
+module.exports = nextConfig;

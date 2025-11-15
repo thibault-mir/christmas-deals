@@ -1,0 +1,35 @@
+{
+  "name": "Christmas Deals by Servier",
+  "short_name": "Christmas Deals",
+  "description": "Exclusive Christmas Deals by Chuck Norris",
+  "theme_color": "#07403a",
+  "background_color": "#07403a",
+  "display": "standalone",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-maskable-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["business", "shopping"],
+  "lang": "en"
+}

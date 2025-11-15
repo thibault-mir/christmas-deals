@@ -19,6 +19,7 @@ model User {
   // Relations pour NextAuth
   accounts      Account[]
   sessions      Session[]
+  bids          Bid[]
 }
 
 model Account {
@@ -54,4 +55,71 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+enum Condition {
+  NEW
+  LIKE_NEW
+  VERY_GOOD
+  GOOD
+  USED
+}
+
+enum AuctionStatus {
+  UPCOMING
+  ACTIVE
+  ENDED
+}
+
+model Product {
+  id          String    @id @default(cuid())
+  name        String
+  description String
+  condition   Condition
+  imageUrl    String?
+
+  auctions    Auction[]
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Auction {
+  id             String         @id @default(cuid())
+  product        Product        @relation(fields: [productId], references: [id])
+  productId      String
+
+   // Prix de départ
+  startingPrice  Decimal
+
+  // Prix actuel (on l’update à chaque bid)
+  currentPrice   Decimal
+
+  // Montant de la mise (1€, 2€, 5€, etc.)
+  bidStep        Decimal
+
+  status         AuctionStatus  @default(UPCOMING)
+
+  startsAt       DateTime
+  endsAt         DateTime
+
+  bids           Bid[]
+
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+}
+
+model Bid {
+  id        String   @id @default(cuid())
+
+  auction   Auction  @relation(fields: [auctionId], references: [id], onDelete: Cascade)
+  auctionId String
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+
+  // Montant exact de la mise ( = currentPrice après incrément)
+  amount    Decimal
+
+  createdAt DateTime @default(now())
 }
