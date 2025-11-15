@@ -158,10 +158,9 @@ export default function Homepage() {
         </section>
 
         {/* DEALS - FOND ROUGE NOËL */}
-        <section id="deals" className="section section-deals">
+        <section id="deals" className="section section-deals section-about">
           <div className="section-inner">
-            <h2>Les enchères</h2>
-            <p>Découvrez les lots disponibles et enchérissez en un clic.</p>
+            <h1 className="hero-title title-christmas">Deals</h1>
 
             {loadingDeals && <p>Chargement des enchères…</p>}
 
