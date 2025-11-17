@@ -58,7 +58,7 @@ export default function NavBar() {
     <header className={`navbar ${scrolled ? "navbar-scrolled" : ""}`}>
       <div className="nav-container">
         {/* Logo gauche */}
-        <div className="nav-logo">
+        <div className="nav-logo" style={{ marginTop: "-10px" }}>
           <Link href="/">
             <img
               src="/images/logo.png"

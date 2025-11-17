@@ -572,19 +572,19 @@ body {
 
 /* DEALS : ROUGE NOËL */
 .section-deals {
-  background: #8b0019; /* rouge Noël sombre */
+  background: #c70b1e; /* rouge Noël sombre */
   color: #ffffff;
 }
 
 /* CELEBRATE : VERT PROFOND */
 .section-celebrate {
-  background: #022824;
-  color: #ffffff;
+  background: #ffffff;
+  color: #013932;
 }
 
 /* CONTACTS : PLUS SOMBRE / FOOTER-STYLE */
 .section-contacts {
-  background: #011816;
+  background: #00322c;
   color: #ffffff;
 }
 
@@ -613,7 +613,7 @@ body {
 }
 
 .section-inner {
-  max-width: 1100px;
+  max-width: 1400px;
   margin: 0 auto;
 }
 
@@ -686,7 +686,7 @@ body {
 /* ===== ABOUT SECTION ===== */
 .section-about {
   min-height: auto !important;
-  padding: 150px 40px 150px !important; /* ← resserré */
+  padding: 90px 40px 90px !important; /* ← resserré */
 }
 .section-about .section-inner {
   max-width: 1400px;
@@ -705,6 +705,13 @@ body {
 
 /* BIG TITLE */
 .section-about h2 {
+  font-family: "Fredoka One", cursive;
+  font-size: 4rem; /* ← plus grand */
+  margin-bottom: 25px;
+  line-height: 0.85;
+}
+
+.section-contacts h2 {
   font-family: "Fredoka One", cursive;
   font-size: 4rem; /* ← plus grand */
   margin-bottom: 25px;
@@ -741,8 +748,6 @@ body {
 .about-icon {
   width: 48px;
   height: 48px;
-  border-radius: 999px;
-  background: rgba(0, 201, 167, 0.18);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -753,10 +758,12 @@ body {
   font-size: 1.8rem;
   font-family: "Fredoka One", cursive;
   margin-bottom: 4px;
+  margin-top: 3px;
+  margin-left: 55px;
 }
 
 .about-detail-title span {
-  font-weight: 700;
+  font-weight: 550;
   color: #00c9a7;
 }
 
@@ -764,6 +771,8 @@ body {
   font-size: 0.95rem;
   line-height: 1.7;
   opacity: 0.85;
+  margin-top: 25px;
+  margin-bottom: 10px;
 }
 
 /* IMAGE COLUMN — MORE SPACE FOR IMAGE */
@@ -815,15 +824,27 @@ body {
 /* DEALS CARD */
 .deals-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(3, 1fr); /* toujours 3 colonnes */
   gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .deals-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 colonnes sur tablette */
+  }
+}
+
+@media (max-width: 640px) {
+  .deals-grid {
+    grid-template-columns: 1fr; /* 1 colonne sur mobile */
+  }
 }
 
 .deal-card {
   background: rgba(2, 37, 34, 0.9);
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
   border: 1px solid rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(10px);
   display: flex;
@@ -834,7 +855,6 @@ body {
 
 .deal-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
   border-color: rgba(0, 201, 167, 0.6);
 }
 
@@ -863,6 +883,7 @@ body {
 
 .deal-card-title {
   font-family: "Fredoka One", cursive;
+  font-weight: 100;
   font-size: 1.15rem;
 }
 
@@ -915,6 +936,7 @@ body {
 
 .deal-card-countdown-value {
   font-weight: 600;
+  margin-left: 10px;
 }
 
 .deal-card-countdown-value.ended {
@@ -946,4 +968,319 @@ body {
 .deal-card-bid-button:disabled {
   opacity: 0.6;
   cursor: default;
+}
+
+.deals-filters {
+  margin: 18px 0 24px;
+  padding: 14px 18px;
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 32px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.deals-filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+}
+
+.deals-filter-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  opacity: 0.8;
+}
+
+.deals-filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.deals-filter-chip {
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(0, 0, 0, 0.15);
+  color: #ffffff;
+  font-size: 0.8rem;
+  padding: 6px 14px;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: background 0.15s ease, border-color 0.15s ease, opacity 0.15s ease,
+    transform 0.08s ease;
+}
+
+.deals-filter-chip:hover {
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+.deals-filter-chip.active {
+  background: #00c9a7;
+  border-color: #00f0c5;
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .deals-filters {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(60px);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+
+/* Texte depuis la gauche */
+.reveal-left {
+  transform: translateX(-120px);
+}
+
+/* Image depuis la droite */
+.reveal-right {
+  transform: translateX(120px);
+}
+
+/* Quand visible */
+.reveal.visible {
+  opacity: 1;
+  transform: translateX(0) translateY(0);
+}
+
+/* ========= CONTACTS SECTION ========= */
+
+.section-contacts {
+  background: #00322c; /* ta couleur */
+  color: #ffffff;
+  min-height: auto !important;
+  padding: 50px 40px 50px !important;
+}
+
+/* Grid 2 colonnes */
+.contacts-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 60px;
+  align-items: center;
+}
+
+.contacts-title {
+  font-family: "Fredoka One", cursive;
+  font-size: 2.6rem;
+  margin-bottom: 18px;
+}
+
+.contacts-lead {
+  font-size: 1.15rem;
+  line-height: 1.8;
+  opacity: 0.85;
+  margin-bottom: 32px;
+}
+
+.contacts-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.contacts-info-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.contacts-info-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: rgba(0, 201, 167, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.contacts-info-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  opacity: 0.8;
+  margin-bottom: 2px;
+}
+
+.contacts-info-value {
+  font-size: 0.95rem;
+  opacity: 0.95;
+}
+
+/* Form colonne droite */
+.contacts-form-col {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.contacts-form {
+  width: 100%;
+  max-width: 420px;
+  padding: 22px 20px 20px;
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+}
+
+.contacts-form-title {
+  font-family: "Fredoka One", cursive;
+  font-size: 1.3rem;
+  margin-bottom: 18px;
+  font-weight: 200;
+}
+
+.contacts-form-group {
+  margin-bottom: 14px;
+}
+
+.contacts-label {
+  display: block;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  opacity: 0.85;
+  margin-bottom: 6px;
+}
+
+.contacts-input,
+.contacts-textarea {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(0, 0, 0, 0.25);
+  color: #ffffff;
+  font-size: 0.95rem;
+  padding: 10px 12px;
+  outline: none;
+  resize: vertical;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease,
+    background 0.15s ease;
+}
+
+.contacts-input::placeholder,
+.contacts-textarea::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.contacts-input:focus,
+.contacts-textarea:focus {
+  border-color: #00c9a7;
+  box-shadow: 0 0 0 1px #00c9a7;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.contacts-submit {
+  margin-top: 4px;
+  width: 100%;
+  border: none;
+  border-radius: 999px;
+  padding: 11px 18px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-family: "Fredoka One", cursive;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  background: linear-gradient(120deg, #ff4c73, #ff9552);
+  color: #ffffff;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+  transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.1s ease;
+}
+
+.contacts-submit:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+}
+
+.contacts-submit:active {
+  transform: translateY(1px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .contacts-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .contacts-form-col {
+    justify-content: flex-start;
+  }
+
+  .contacts-title {
+    font-size: 2.2rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .contacts-title {
+    font-size: 2rem;
+  }
+
+  .contacts-form {
+    padding: 18px 16px 16px;
+  }
+}
+
+/* ========= FOOTER ========= */
+
+.site-footer {
+  background: #011816;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 30px 20px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.footer-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.footer-text {
+  font-size: 0.85rem;
+  margin-bottom: 6px;
+  opacity: 0.7;
+}
+
+.footer-powered {
+  font-size: 0.75rem;
+  opacity: 0.55;
+  letter-spacing: 0.03em;
+}
+
+.footer-powered span {
+  color: #00c9a7;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+/* Responsive footer */
+@media (max-width: 600px) {
+  .footer-text {
+    font-size: 0.8rem;
+  }
+  .footer-powered {
+    font-size: 0.7rem;
+  }
 }

@@ -10,6 +10,7 @@ export interface DealCardProps {
   name: string;
   description: string;
   condition: Condition;
+  category?: string;
   imageUrl?: string | null;
   currentPrice: number;
   startingPrice: number;
@@ -20,15 +21,15 @@ export interface DealCardProps {
 function formatCondition(condition: Condition) {
   switch (condition) {
     case "NEW":
-      return "Neuf";
+      return "New";
     case "LIKE_NEW":
-      return "Comme neuf";
+      return "Like New";
     case "VERY_GOOD":
-      return "Très bon état";
+      return "Very Good";
     case "GOOD":
-      return "Bon état";
+      return "Good";
     case "USED":
-      return "Utilisé";
+      return "Used";
     default:
       return condition;
   }
@@ -55,6 +56,7 @@ export default function DealCard(props: DealCardProps) {
     name,
     description,
     condition,
+    category,
     imageUrl,
     currentPrice,
     startingPrice,
@@ -96,24 +98,24 @@ export default function DealCard(props: DealCardProps) {
 
         <div className="deal-card-prices">
           <div>
-            <span className="deal-card-label">Prix actuel</span>
-            <div className="deal-card-price">{currentPrice.toFixed(2)} €</div>
+            <span className="deal-card-label">Actual Price</span>
+            <div className="deal-card-price">{Math.floor(currentPrice)} €</div>
           </div>
           <div>
-            <span className="deal-card-label">Prix de départ</span>
+            <span className="deal-card-label">Starting Price</span>
             <div className="deal-card-subprice">
-              {startingPrice.toFixed(2)} €
+              {Math.floor(startingPrice)} €
             </div>
           </div>
           <div>
-            <span className="deal-card-label">Mise</span>
-            <div className="deal-card-subprice">+{bidStep.toFixed(2)} €</div>
+            <span className="deal-card-label">Bid Step</span>
+            <div className="deal-card-subprice">{Math.floor(bidStep)} €</div>
           </div>
         </div>
 
         <div className="deal-card-footer">
           <div className="deal-card-countdown">
-            <span className="deal-card-label">Temps restant</span>
+            <span className="deal-card-label">Time Left</span>
             <span
               className={`deal-card-countdown-value ${isEnded ? "ended" : ""}`}
             >
@@ -126,7 +128,7 @@ export default function DealCard(props: DealCardProps) {
             className="deal-card-bid-button"
             disabled={isEnded}
           >
-            {isEnded ? "Terminé" : "Enchérir"}
+            {isEnded ? "Ended" : "Bid"}
           </button>
         </div>
       </div>

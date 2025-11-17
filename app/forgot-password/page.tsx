@@ -57,7 +57,7 @@ export default function ForgotPasswordPage() {
         <section className="login-card">
           <h1 className="login-title">Reset Password</h1>
           <p className="login-subtitle">
-            Enter your email to receive a reset link
+            Enter your email to receive your password.
           </p>
 
           {error && (

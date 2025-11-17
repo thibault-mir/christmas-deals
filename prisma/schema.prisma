@@ -71,12 +71,25 @@ enum AuctionStatus {
   ENDED
 }
 
+enum Category {
+  TEXTILES
+  ELECTRONICS
+  WINE
+  FURNITURE
+  GYM_EQUIPMENT
+  DECOR
+  OTHER
+}
+
 model Product {
   id          String    @id @default(cuid())
   name        String
   description String
   condition   Condition
   imageUrl    String?
+
+// NEW
+  category    Category  @default(OTHER)
 
   auctions    Auction[]
 

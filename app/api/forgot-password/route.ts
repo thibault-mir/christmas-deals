@@ -2,11 +2,8 @@
 // app/api/forgot-password/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { SignJWT } from "jose";
-
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "ton-secret-pour-jwt"
-);
+import { sendMail } from "@/app/utils/sendMail";
+import bcrypt from "bcryptjs";
 
 export async function POST(request: Request) {
   try {
@@ -26,32 +23,57 @@ export async function POST(request: Request) {
       console.log("Password reset requested for non-existent email:", email);
       return NextResponse.json({
         message:
-          "If an account with that email exists, you will receive a reset link",
+          "If an account with that email exists, you will a new password",
       });
     }
 
-    // Crée un token de réinitialisation (valide 1 heure)
-    const resetToken = await new SignJWT({
-      userId: user.id,
-      email: user.email,
-      type: "password_reset",
-    })
-      .setProtectedHeader({ alg: "HS256" })
-      .setExpirationTime("1h")
-      .sign(JWT_SECRET);
+    // Génère un nouveau mot de passe temporaire
+    const tempPassword = Math.random().toString(36).slice(-8) + "!A1";
+    const hashedPassword = await bcrypt.hash(tempPassword, 12);
 
-    // En production, ici tu enverrais un email avec le lien
-    console.log(
-      "📧 Password reset link (in production this would be emailed):"
-    );
-    console.log(`http://localhost:3000/reset-password?token=${resetToken}`);
+    // Met à jour le mot de passe dans la base
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { password: hashedPassword },
+    });
 
-    // Enregistre le token dans la base (optionnel)
-    // await prisma.passwordReset.create({ ... })
+    // Envoie le nouveau mot de passe par email
+    const html = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #013932;">Christmas Deals - Password Reset</h2>
+        <p>Hello,</p>
+        <p>You requested a password reset for the Christmas Deals platform.</p>
+        
+        <div style="background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
+          <strong>Email:</strong> ${user.email}<br>
+          <strong>Your new password:</strong> ${tempPassword}
+        </div>
+
+        <p><strong>Important:</strong> Please change your password after logging in.</p>
+
+        <p style="color: #666; font-size: 14px;">
+          If you didn't request this, please contact support immediately.
+        </p>
+        
+        <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+        <p style="color: #999; font-size: 12px;">
+          Christmas Deals by Servier<br>
+          This is an automated message, please do not reply.
+        </p>
+      </div>
+    `;
+
+    await sendMail({
+      to: user.email,
+      subject: "🔐 Your New Christmas Deals Password",
+      html,
+    });
+
+    console.log(`📧 New password sent to: ${user.email}`);
 
     return NextResponse.json({
       message:
-        "If an account with that email exists, you will receive a reset link",
+        "If an account with that email exists, you will receive a new password",
     });
   } catch (error: any) {
     console.error("Forgot password error:", error);

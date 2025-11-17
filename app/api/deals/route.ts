@@ -25,6 +25,7 @@ export async function GET() {
       name: a.product.name,
       description: a.product.description,
       condition: a.product.condition,
+      category: a.product.category,
       imageUrl: a.product.imageUrl,
       currentPrice: Number(a.currentPrice),
       startingPrice: Number(a.startingPrice),

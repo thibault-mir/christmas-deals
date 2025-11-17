@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useEffect } from "react";
 import Script from "next/script";
+import { useEffect } from "react";
 
 declare global {
   interface Window {
@@ -12,10 +12,16 @@ declare global {
 
 type ParticlesBackgroundProps = {
   mode?: "full" | "section";
+  id?: string;
+  density?: number; // ← nouveau : nombre de particules
+  size?: number; // ← nouveau : taille des flocons
 };
 
 export default function ParticlesBackground({
   mode = "full",
+  id = "particles-js-hero",
+  density = 100,
+  size = 4,
 }: ParticlesBackgroundProps) {
   const style =
     mode === "full"
@@ -35,114 +41,105 @@ export default function ParticlesBackground({
           pointerEvents: "none" as const,
         };
 
-  useEffect(() => {
-    let intervalId: NodeJS.Timeout | null = null;
-    let attempts = 0;
-    const maxAttempts = 30; // 3s de retry
+  const initParticles = () => {
+    if (
+      typeof window === "undefined" ||
+      !window.particlesJS ||
+      !document.getElementById(id)
+    ) {
+      return;
+    }
 
-    const initParticles = () => {
-      if (typeof window === "undefined") return;
-
-      const hasLib = !!window.particlesJS;
-      const canvasTarget = document.getElementById("particles-js-1");
-
-      if (!hasLib || !canvasTarget) return;
-
-      // Initialise les particules
-      window.particlesJS("particles-js-1", {
-        particles: {
-          number: {
-            value: 100,
-            density: {
-              enable: true,
-              value_area: 800,
-            },
-          },
-          color: {
-            value: "#ffffff",
-          },
-          shape: {
-            type: "circle",
-          },
-          opacity: {
-            value: 0.7,
-            random: true,
-            anim: {
-              enable: true,
-              speed: 1,
-              opacity_min: 0.3,
-              sync: false,
-            },
-          },
-          size: {
-            value: 4,
-            random: true,
-            anim: {
-              enable: true,
-              speed: 2,
-              size_min: 1,
-              sync: false,
-            },
-          },
-          line_linked: {
-            enable: false,
-          },
-          move: {
+    window.particlesJS(id, {
+      particles: {
+        number: {
+          value: density, // ← utilise la prop
+          density: {
             enable: true,
-            speed: 1.5,
-            direction: "bottom",
-            random: true,
-            straight: false,
-            out_mode: "out",
-            bounce: false,
-            attract: {
-              enable: false,
-              rotateX: 600,
-              rotateY: 1200,
-            },
+            value_area: 800,
           },
         },
-        interactivity: {
-          detect_on: "canvas",
-          events: {
-            onhover: { enable: false, mode: "repulse" },
-            onclick: { enable: false, mode: "push" },
-            resize: true,
+        color: {
+          value: "#ffffff",
+        },
+        shape: {
+          type: "circle",
+        },
+        opacity: {
+          value: 0.7,
+          random: true,
+          anim: {
+            enable: true,
+            speed: 1,
+            opacity_min: 0.3,
+            sync: false,
           },
         },
-        retina_detect: true,
-      });
+        size: {
+          value: size, // ← utilise la prop
+          random: true,
+          anim: {
+            enable: true,
+            speed: 2,
+            size_min: 1,
+            sync: false,
+          },
+        },
+        line_linked: {
+          enable: false,
+        },
+        move: {
+          enable: true,
+          speed: 1.5,
+          direction: "bottom",
+          random: true,
+          straight: false,
+          out_mode: "out",
+          bounce: false,
+          attract: {
+            enable: false,
+            rotateX: 600,
+            rotateY: 1200,
+          },
+        },
+      },
+      interactivity: {
+        detect_on: "canvas",
+        events: {
+          onhover: { enable: false, mode: "repulse" },
+          onclick: { enable: false, mode: "push" },
+          resize: true,
+        },
+      },
+      retina_detect: true,
+    });
+  };
 
-      if (intervalId) clearInterval(intervalId);
-    };
-
-    // On tente tout de suite
-    initParticles();
-
-    // Si ce n’est pas prêt, on retry toutes les 100ms
-    intervalId = setInterval(() => {
-      attempts += 1;
-      if (attempts > maxAttempts) {
-        if (intervalId) clearInterval(intervalId);
-        return;
+  useEffect(() => {
+    let tries = 0;
+    const interval = setInterval(() => {
+      if (window.particlesJS && document.getElementById(id)) {
+        initParticles();
+        clearInterval(interval);
       }
-      initParticles();
-    }, 100);
+      tries++;
+      if (tries > 20) {
+        clearInterval(interval);
+      }
+    }, 200);
 
-    return () => {
-      if (intervalId) clearInterval(intervalId);
-    };
-  }, [mode]);
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, density, size]);
 
   return (
     <>
-      {/* Charge la librairie une fois, Next gère le cache */}
       <Script
         src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"
         strategy="afterInteractive"
+        onLoad={initParticles}
       />
-
-      <div id="particles-js-1" style={style} />
+      <div id={id} style={style} />
     </>
   );
 }
