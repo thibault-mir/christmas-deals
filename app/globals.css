@@ -1395,27 +1395,30 @@ body {
   font-size: 1.25rem;
 }
 
-/* Modal d'historique */
+/* Modal d'historique - Responsive */
 .history-modal {
   max-width: 500px;
   max-height: 70vh;
   display: flex;
   flex-direction: column;
+  margin: 20px; /* Ajoute de la marge sur mobile */
+  width: calc(100% - 40px); /* Prend toute la largeur moins les marges */
 }
 
 .history-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 15px;
+  margin-bottom: 15px;
+  padding-bottom: 12px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .history-header h3 {
   margin: 0;
-  font-size: 1.3rem;
+  font-size: 1.1rem; /* Plus petit sur mobile */
   color: #fff;
+  line-height: 1.3;
 }
 
 .history-close {
@@ -1430,10 +1433,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.history-close:hover {
-  background: rgba(255, 255, 255, 0.2);
+  flex-shrink: 0; /* Empêche le rétrécissement */
+  margin-left: 10px;
 }
 
 .history-content {
@@ -1446,8 +1447,9 @@ body {
 .history-error,
 .history-empty {
   text-align: center;
-  padding: 20px;
+  padding: 20px 10px;
   color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
 }
 
 .history-error {
@@ -1457,38 +1459,93 @@ body {
 .history-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .history-item {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 12px 15px;
+  align-items: flex-start; /* Aligne en haut pour mobile */
+  padding: 10px 12px;
   background: rgba(255, 255, 255, 0.05);
-  border-radius: 10px;
+  border-radius: 8px;
   border-left: 3px solid #00c9a7;
+  flex-wrap: wrap; /* Permet le wrap sur mobile */
 }
 
 .bid-info {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
+  flex: 1; /* Prend l'espace disponible */
+  min-width: 0; /* Permet le truncate */
 }
 
 .bid-amount {
-  font-size: 1.1rem;
+  font-size: 1rem; /* Plus petit sur mobile */
   font-weight: 700;
   color: #00c9a7;
 }
 
 .bid-user {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   opacity: 0.8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .bid-date {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   opacity: 0.7;
   text-align: right;
+  white-space: nowrap;
+  margin-left: 10px;
+}
+
+/* Media queries pour mobile */
+@media (max-width: 480px) {
+  .history-modal {
+    margin: 15px;
+    width: calc(100% - 30px);
+    max-height: 80vh; /* Plus de hauteur sur mobile */
+  }
+
+  .history-header h3 {
+    font-size: 1rem;
+  }
+
+  .history-item {
+    flex-direction: column; /* Passe en colonne sur très petit écran */
+    gap: 5px;
+  }
+
+  .bid-date {
+    text-align: left;
+    margin-left: 0;
+    align-self: flex-end;
+  }
+
+  .bid-modal {
+    padding: 20px; /* Réduit le padding sur mobile */
+  }
+}
+
+/* Pour les très petits écrans */
+@media (max-width: 360px) {
+  .history-modal {
+    margin: 10px;
+    width: calc(100% - 20px);
+  }
+
+  .history-header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .history-close {
+    align-self: flex-end;
+    margin-top: -45px; /* Remonte le bouton */
+  }
 }
