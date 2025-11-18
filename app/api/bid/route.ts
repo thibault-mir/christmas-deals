@@ -105,7 +105,7 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json(
-      { error: "Error while placing bid" },
+      { error: "Error - Refresh the page and try again." },
       { status: 500 }
     );
   }

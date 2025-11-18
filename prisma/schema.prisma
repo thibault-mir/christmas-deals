@@ -20,6 +20,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   bids          Bid[]
+  favorites     Favorite[] // <-- AJOUTER CETTE LIGNE
 }
 
 model Account {
@@ -87,11 +88,10 @@ model Product {
   description String
   condition   Condition
   imageUrl    String?
-
-// NEW
   category    Category  @default(OTHER)
 
   auctions    Auction[]
+  favorites   Favorite[] // <-- AJOUTER CETTE LIGNE
 
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -135,4 +135,16 @@ model Bid {
   amount    Decimal
 
   createdAt DateTime @default(now())
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId]) // Un user ne peut favoriser un produit qu'une fois
 }

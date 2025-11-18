@@ -1660,3 +1660,90 @@ body {
     margin-top: -45px; /* Remonte le bouton */
   }
 }
+
+/* Bouton favori */
+/* .favorite-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.favorite-btn:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: scale(1.1);
+}
+
+.favorite-active {
+  background: rgba(255, 215, 0, 0.9);
+  color: #fff;
+}
+
+.favorite-loading {
+  opacity: 0.7;
+  cursor: not-allowed;
+} */
+
+/* Bouton favori */
+.favorite-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border: none;
+  background: rgba(0, 0, 0, 0.35);
+  color: #ffffff; /* ⭐ blanc quand pas favori */
+  border-radius: 999px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 0;
+  transition: transform 0.1s ease, background 0.1s ease, opacity 0.1s ease;
+}
+
+/* Hover */
+.favorite-btn:hover {
+  transform: scale(1.05);
+  background: rgba(0, 0, 0, 0.6);
+}
+
+/* Quand favori → étoile jaune + fond subtil doré */
+.favorite-btn.favorite-active {
+  color: #ffd93b; /* ⭐ jaune */
+  background: rgba(246, 206, 39, 0.25);
+}
+
+/* Loading (optionnel) */
+.favorite-btn.favorite-loading {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.favorites-chip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Si tu veux une couleur différente quand actif (facultatif) */
+
+.favorites-chip.active {
+  background: #ffd93b;
+  border-color: #ffe680;
+  color: #00211c;
+}

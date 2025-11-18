@@ -25,6 +25,9 @@ export interface DealCardProps {
   bidStep: number;
   endsAt: string; // ISO string
   isLeadingForCurrentUser?: boolean;
+  productId: string; // <-- Ajouter productId pour les favoris
+  isFavorite?: boolean; // <-- État initial du favori
+  onFavoriteChange?: (productId: string, next: boolean) => void; // 👈 new
 }
 
 function formatCondition(condition: Condition) {
@@ -72,6 +75,9 @@ export default function DealCard(props: DealCardProps) {
     bidStep,
     endsAt,
     isLeadingForCurrentUser = false,
+    productId, // <-- Nouveau
+    isFavorite = false,
+    onFavoriteChange,
   } = props;
 
   const [now, setNow] = useState(() => Date.now());
@@ -80,6 +86,8 @@ export default function DealCard(props: DealCardProps) {
   const [bidError, setBidError] = useState<string | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [isLeading, setIsLeading] = useState<boolean>(isLeadingForCurrentUser);
+  const [favorite, setFavorite] = useState<boolean>(isFavorite);
+  const [favoriteLoading, setFavoriteLoading] = useState(false);
 
   // Historique
   const [showHistory, setShowHistory] = useState(false);
@@ -87,6 +95,11 @@ export default function DealCard(props: DealCardProps) {
   const [loadingBids, setLoadingBids] = useState(false);
   const [bidsError, setBidsError] = useState<string | null>(null);
   const [hasLoadedBids, setHasLoadedBids] = useState(false);
+
+  // 🔁 Sync quand la prop vient de changer (ex : après /api/favorites)
+  useEffect(() => {
+    setFavorite(isFavorite);
+  }, [isFavorite]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -109,9 +122,40 @@ export default function DealCard(props: DealCardProps) {
   const timeLeftLabel = formatTimeLeft(timeLeft);
   const isEnded = timeLeft <= 0;
 
+  // Fonction pour gérer les favoris
+  const toggleFavorite = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (favoriteLoading) return;
+
+    setFavoriteLoading(true);
+    try {
+      const res = await fetch("/api/favorites", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          productId,
+          action: favorite ? "remove" : "add",
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        const next = !favorite;
+        setFavorite(next);
+        onFavoriteChange?.(productId, next); // 👈 on prévient le parent
+      } else {
+        console.error("Error toggling favorite:", data.error);
+      }
+    } catch (err) {
+      console.error("Network error:", err);
+    } finally {
+      setFavoriteLoading(false);
+    }
+  };
+
   const handleBidClick = () => {
     setConfirmOpen(true);
-    handleBid();
   };
 
   const handleBid = async () => {
@@ -153,7 +197,6 @@ export default function DealCard(props: DealCardProps) {
       setLoadingBids(true);
       setBidsError(null);
 
-      // Utilise la bonne URL avec le paramètre dynamique
       const res = await fetch(`/api/bids/${id}`);
       const data = await res.json();
 
@@ -188,6 +231,17 @@ export default function DealCard(props: DealCardProps) {
         }`}
         onClick={handleCardClick}
       >
+        {/* Bouton favori en haut à droite */}
+        <button
+          className={`favorite-btn ${favorite ? "favorite-active" : ""} ${
+            favoriteLoading ? "favorite-loading" : ""
+          }`}
+          onClick={toggleFavorite}
+          aria-label={favorite ? "Remove from favorites" : "Add to favorites"}
+        >
+          {favoriteLoading ? "☆" : favorite ? "★" : "☆"}
+        </button>
+
         {/* Contenu normal de la carte */}
         <div className="card-content">
           {imageUrl && (
@@ -267,6 +321,7 @@ export default function DealCard(props: DealCardProps) {
           </div>
         </div>
       </article>
+
       {/* Modal d'historique */}
       {showHistory && (
         <div
@@ -329,15 +384,13 @@ export default function DealCard(props: DealCardProps) {
           </div>
         </div>
       )}
+
       {confirmOpen && (
         <div
           className="bid-modal-overlay"
           onClick={() => setConfirmOpen(false)}
         >
-          <div
-            className="bid-modal"
-            onClick={(e) => e.stopPropagation()} // important : empêcher fermer si clic dedans
-          >
+          <div className="bid-modal" onClick={(e) => e.stopPropagation()}>
             <h3>Confirm your bid</h3>
             <p>
               Are you sure you want to place a bid of{" "}
@@ -356,6 +409,7 @@ export default function DealCard(props: DealCardProps) {
                 className="btn-confirm"
                 onClick={async () => {
                   setConfirmOpen(false);
+                  await handleBid();
                 }}
               >
                 Confirm

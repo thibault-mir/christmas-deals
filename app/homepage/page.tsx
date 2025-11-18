@@ -44,6 +44,30 @@ export default function Homepage() {
 
   const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
   const [sortBy, setSortBy] = useState<"PRICE_ASC" | "PRICE_DESC">("PRICE_ASC");
+  const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
+
+  const [favorites, setFavorites] = useState<string[]>([]);
+
+  useEffect(() => {
+    const loadFavorites = async () => {
+      try {
+        const res = await fetch("/api/favorites");
+        if (!res.ok) {
+          console.error("Error loading favorites");
+          return;
+        }
+
+        const data = await res.json();
+        // data = user.favorites venant du GET
+        const productIds = data.map((fav: any) => fav.productId);
+        setFavorites(productIds);
+      } catch (err) {
+        console.error("Error fetching favorites", err);
+      }
+    };
+
+    loadFavorites();
+  }, []);
 
   useEffect(() => {
     const loadDeals = async () => {
@@ -75,26 +99,40 @@ export default function Homepage() {
   const visibleDeals = useMemo(() => {
     let list = [...deals];
 
+    // 1) Filtre "favoris uniquement"
+    if (showOnlyFavorites) {
+      list = list.filter((d) => favorites.includes(d.productId));
+    }
+
+    // 2) Filtre catégorie
     if (selectedCategory !== "ALL") {
       list = list.filter((d) => d.category === selectedCategory);
     }
 
-    switch (sortBy) {
-      case "PRICE_ASC":
-        list.sort((a, b) => a.currentPrice - b.currentPrice);
-        break;
-      case "PRICE_DESC":
-        list.sort((a, b) => b.currentPrice - a.currentPrice);
-        break;
-      default:
-        list.sort(
-          (a, b) => new Date(a.endsAt).getTime() - new Date(b.endsAt).getTime()
-        );
-        break;
-    }
+    // 3) Tri : toujours favoris en premier, puis tri par prix
+    list.sort((a, b) => {
+      const favA = favorites.includes(a.productId) ? 1 : 0;
+      const favB = favorites.includes(b.productId) ? 1 : 0;
+
+      // Favoris en premier
+      if (favA !== favB) {
+        return favB - favA; // 1 - 0 => favoris en haut
+      }
+
+      // Ensuite tri selon sortBy
+      if (sortBy === "PRICE_ASC") {
+        return a.currentPrice - b.currentPrice;
+      }
+      if (sortBy === "PRICE_DESC") {
+        return b.currentPrice - a.currentPrice;
+      }
+
+      // fallback éventuel (par date de fin, si tu le gardes)
+      return new Date(a.endsAt).getTime() - new Date(b.endsAt).getTime();
+    });
 
     return list;
-  }, [deals, selectedCategory, sortBy]);
+  }, [deals, selectedCategory, sortBy, favorites, showOnlyFavorites]);
 
   return (
     <div className="site-wrapper">
@@ -239,6 +277,7 @@ export default function Homepage() {
         <section id="deals" className="section section-deals section-about">
           {!loadingDeals && deals.length > 0 && (
             <ParticlesBackground
+              key={`particles-${selectedCategory}-${sortBy}-${visibleDeals.length}`} // Re-render quand les filtres changent
               mode="section"
               id="particles-deals"
               density={140}
@@ -256,6 +295,18 @@ export default function Homepage() {
                 <div className="deals-filter-group">
                   <span className="deals-filter-label">Category</span>
                   <div className="deals-filter-chips">
+                    {/* ⭐ Bouton favoris */}
+                    <button
+                      type="button"
+                      className={
+                        showOnlyFavorites
+                          ? "deals-filter-chip active favorites-chip"
+                          : "deals-filter-chip favorites-chip"
+                      }
+                      onClick={() => setShowOnlyFavorites((prev) => !prev)}
+                    >
+                      ⭐ Favorites
+                    </button>
                     <button
                       type="button"
                       className={
@@ -330,7 +381,20 @@ export default function Homepage() {
             {!loadingDeals && visibleDeals.length > 0 && (
               <div className="deals-grid">
                 {visibleDeals.map((deal) => (
-                  <DealCard key={deal.id} {...deal} />
+                  <DealCard
+                    key={deal.id}
+                    {...deal}
+                    productId={deal.productId}
+                    isFavorite={favorites.includes(deal.productId)}
+                    onFavoriteChange={(productId, next) => {
+                      setFavorites(
+                        (prev) =>
+                          next
+                            ? [...prev, productId] // ajoute
+                            : prev.filter((id) => id !== productId) // retire
+                      );
+                    }}
+                  />
                 ))}
               </div>
             )}

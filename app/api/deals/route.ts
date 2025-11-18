@@ -69,6 +69,7 @@ export async function GET(request: Request) {
         bidStep: Number(a.bidStep),
         endsAt: a.endsAt.toISOString(),
         isLeadingForCurrentUser,
+        productId: a.productId,
       };
     });
 
