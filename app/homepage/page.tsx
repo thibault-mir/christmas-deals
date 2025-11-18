@@ -139,10 +139,9 @@ export default function Homepage() {
           <div className="section-inner about-grid">
             {/* TEXT COLUMN */}
             <div
+              data-reveal="left"
               ref={textAbout.ref}
-              className={`about-text-col reveal reveal-left ${
-                textAbout.visible ? "visible" : ""
-              }`}
+              className={`about-text-col ${textAbout.visible ? "visible" : ""}`}
             >
               <h2 className="about-title">
                 About Christmas <br /> Deals
@@ -219,8 +218,9 @@ export default function Homepage() {
 
             {/* IMAGE COLUMN */}
             <div
+              data-reveal="right"
               ref={imageAbout.ref}
-              className={`about-image-col reveal reveal-right ${
+              className={`about-image-col ${
                 imageAbout.visible ? "visible" : ""
               }`}
             >
@@ -345,8 +345,9 @@ export default function Homepage() {
           <div className="section-inner about-grid">
             {/* TEXT COLUMN */}
             <div
+              data-reveal="left"
               ref={textCelebrate.ref}
-              className={`about-text-col reveal reveal-left ${
+              className={`about-text-col ${
                 textCelebrate.visible ? "visible" : ""
               }`}
             >
@@ -403,8 +404,9 @@ export default function Homepage() {
 
             {/* IMAGE COLUMN */}
             <div
+              data-reveal="right"
               ref={imageCelebrate.ref}
-              className={`about-image-col reveal reveal-right ${
+              className={`about-image-col ${
                 imageCelebrate.visible ? "visible" : ""
               }`}
             >
@@ -422,10 +424,10 @@ export default function Homepage() {
         {/* CONTACTS */}
         <section id="contacts" className="section section-contacts">
           <div className="section-inner contacts-grid">
-            {/* Colonne texte / infos */}
             <div
+              data-reveal="left"
               ref={textContacts.ref}
-              className={`contacts-text-col reveal reveal-left ${
+              className={`contacts-text-col ${
                 textContacts.visible ? "visible" : ""
               }`}
             >
@@ -471,8 +473,9 @@ export default function Homepage() {
 
             {/* Colonne formulaire */}
             <div
+              data-reveal="right"
               ref={imageContacts.ref}
-              className={`contacts-text-col reveal reveal-right ${
+              className={`contacts-text-col ${
                 imageContacts.visible ? "visible" : ""
               }`}
             >

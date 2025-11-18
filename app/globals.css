@@ -1,12 +1,19 @@
 /* app/globals.css */
 @import url("//fonts.googleapis.com/css?family=Fredoka+One&amp;display=swap%7COpen+Sans:300,400,600,700,800&amp;display=swap");
 
+html,
+body {
+  overflow-x: hidden;
+}
+
 html {
   scroll-behavior: smooth;
 }
 
 /* Reset et styles de base */
-* {
+*,
+*::before,
+*::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -295,6 +302,7 @@ body {
   display: flex;
   align-items: center;
   margin-top: 5px;
+  box-sizing: border-box;
 }
 
 /* LOGO (gauche) */
@@ -1034,26 +1042,129 @@ body {
   }
 }
 
-.reveal {
+/* ====== RESPONSIVE DEAL CARDS (mobile) ====== */
+@media (max-width: 640px) {
+  .deal-card {
+    border-radius: 16px;
+  }
+
+  .deal-card-image-wrapper {
+    height: 150px; /* un poil plus compact */
+  }
+
+  .deal-card-body {
+    padding: 12px 12px 14px; /* moins de padding */
+  }
+
+  .deal-card-header {
+    margin-bottom: 6px;
+    gap: 4px;
+  }
+
+  .deal-card-title {
+    font-size: 1rem; /* avant 1.15rem */
+  }
+
+  .leader-crown {
+    font-size: 1.05rem;
+    margin-left: 6px;
+  }
+
+  .deal-card-condition {
+    font-size: 0.65rem; /* plus petit */
+    padding: 3px 8px;
+  }
+
+  .deal-card-description {
+    font-size: 0.8rem; /* avant 0.9rem */
+    margin-bottom: 10px;
+  }
+
+  .deal-card-prices {
+    flex-direction: column; /* au lieu de tout serrer en ligne */
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .deal-card-label {
+    font-size: 0.65rem; /* un chouïa plus petit */
+    letter-spacing: 0.1em;
+  }
+
+  .deal-card-price {
+    font-size: 1.05rem; /* avant 1.2rem */
+  }
+
+  .deal-card-subprice {
+    font-size: 0.85rem;
+  }
+
+  .deal-card-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .deal-card-countdown-value {
+    display: block;
+    margin-left: 0;
+    margin-top: 4px;
+    font-size: 0.85rem;
+  }
+
+  .deal-card-bid-button {
+    width: 100%; /* bouton full width = plus clean sur mobile */
+    text-align: center;
+    padding: 8px 14px;
+    font-size: 0.8rem;
+    letter-spacing: 0.07em;
+  }
+
+  .deal-card-leader-tag {
+    width: 100%;
+    text-align: center;
+    font-size: 0.75rem;
+    padding: 7px 10px;
+  }
+}
+
+/* Pour les très petits écrans style 320–360px */
+@media (max-width: 360px) {
+  .deal-card-body {
+    padding: 10px 10px 12px;
+  }
+
+  .deal-card-title {
+    font-size: 0.95rem;
+  }
+
+  .deal-card-description {
+    font-size: 0.75rem;
+  }
+
+  .deal-card-price {
+    font-size: 1rem;
+  }
+
+  .deal-card-subprice {
+    font-size: 0.8rem;
+  }
+}
+
+/* Animation avec data-attributes */
+/* État initial de tous les éléments qui se révèlent */
+[data-reveal] {
   opacity: 0;
-  transform: translateY(60px);
-  transition: opacity 0.9s ease, transform 0.9s ease;
+  transform: translateY(30px); /* léger décalage vers le bas */
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  will-change: opacity, transform;
 }
 
-/* Texte depuis la gauche */
-.reveal-left {
-  transform: translateX(-120px);
-}
-
-/* Image depuis la droite */
-.reveal-right {
-  transform: translateX(120px);
-}
-
-/* Quand visible */
-.reveal.visible {
+/* Quand ton hook met visible = true */
+[data-reveal].visible {
   opacity: 1;
-  transform: translateX(0) translateY(0);
+  transform: translateY(0);
 }
 
 /* ========= CONTACTS SECTION ========= */

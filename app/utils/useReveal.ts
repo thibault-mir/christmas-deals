@@ -10,16 +10,37 @@ export function useReveal() {
     const el = ref.current;
     if (!el) return;
 
+    // Vérifie si c'est un élément de navbar
+    const isInNavbar = el.closest(".navbar, nav, header");
+    if (isInNavbar) {
+      requestAnimationFrame(() => {
+        setVisible(true);
+      });
+      return;
+    }
+
+    // Seulement les éléments avec data-reveal sont animés
+    if (!el.hasAttribute("data-reveal")) {
+      requestAnimationFrame(() => {
+        setVisible(true);
+      });
+      return;
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setVisible(true);
-            observer.unobserve(el); // ne trigger qu’une seule fois
+            requestAnimationFrame(() => {
+              setVisible(true);
+            });
+            observer.unobserve(el);
           }
         });
       },
-      { threshold: 0.2 } // modifie si tu veux que ça se déclenche plus tôt ou plus tard
+      {
+        threshold: 0.2,
+      }
     );
 
     observer.observe(el);
