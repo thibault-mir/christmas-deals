@@ -532,7 +532,7 @@ body {
 
   /* Ajuste la hauteur du menu mobile pour accommoder les nouveaux liens */
   .nav-menu.nav-menu-open {
-    max-height: 380px;
+    max-height: 420px;
   }
 }
 

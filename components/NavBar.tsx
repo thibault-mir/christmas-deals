@@ -180,6 +180,7 @@ export default function NavBar() {
           </Link>
           {/* Section Account - Visible seulement en mobile */}
           <div className="nav-mobile-account">
+            <div className="nav-link">Welcome {getDisplayName()} !</div>
             <Link
               href="/account"
               className="nav-link"
@@ -213,7 +214,7 @@ export default function NavBar() {
                 }
               }}
             >
-              ⏻ Log Out
+              Log Out
             </Link>
           </div>
 
