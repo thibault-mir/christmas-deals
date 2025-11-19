@@ -282,10 +282,17 @@ export default function DealCard(props: DealCardProps) {
                   +{Math.floor(bidStep)} €
                 </div>
               </div>
+
+              <div className="mobile-est-price">
+                <span className="deal-card-label">Est. Price</span>
+                <div className="deal-card-subprice">
+                  {estimatePrice ? `${Math.floor(estimatePrice)} €` : "N/A"}
+                </div>
+              </div>
             </div>
 
             <div className="deal-card-footer">
-              <div className="deal-card-countdown">
+              <div className="desktop-est-price">
                 <span className="deal-card-label">Est. Price</span>
                 <span
                   className={`deal-card-countdown-value ${
@@ -301,9 +308,7 @@ export default function DealCard(props: DealCardProps) {
                   Ended
                 </button>
               ) : isLeading ? (
-                <div className="deal-card-leader-tag">
-                  You are currently leading
-                </div>
+                <div className="deal-card-leader-tag">You&apos;re winning!</div>
               ) : (
                 <button
                   type="button"

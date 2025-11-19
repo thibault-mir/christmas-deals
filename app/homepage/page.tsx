@@ -46,6 +46,7 @@ export default function Homepage() {
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
 
   const [favorites, setFavorites] = useState<string[]>([]);
+  const [leadingDeals, setLeadingDeals] = useState<string[]>([]);
 
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState<{ type: string; message: string }>({
@@ -103,6 +104,25 @@ export default function Homepage() {
     }
   };
 
+  // Récupère les leading deals au mount
+  useEffect(() => {
+    const fetchLeadingDeals = async () => {
+      try {
+        const response = await fetch("/api/user/leading-deals");
+        const data = await response.json();
+        setLeadingDeals(data.leadingDeals.map((deal: any) => deal.id));
+      } catch (error) {
+        console.error("Error fetching leading deals:", error);
+      }
+    };
+
+    fetchLeadingDeals();
+  }, []);
+
+  const isUserLeadingAuction = (auctionId: string) => {
+    return leadingDeals.includes(auctionId);
+  };
+
   useEffect(() => {
     const loadFavorites = async () => {
       try {
@@ -154,27 +174,32 @@ export default function Homepage() {
   const visibleDeals = useMemo(() => {
     let list = [...deals];
 
-    // 1) Filtre "favoris uniquement"
+    // Filtres...
     if (showOnlyFavorites) {
       list = list.filter((d) => favorites.includes(d.productId));
     }
-
-    // 2) Filtre catégorie
     if (selectedCategory !== "ALL") {
       list = list.filter((d) => d.category === selectedCategory);
     }
 
-    // 3) Tri : toujours favoris en premier, puis tri par prix
+    // Tri : leader → favoris → puis tri par prix
     list.sort((a, b) => {
+      const isLeaderA = isUserLeadingAuction(a.id);
+      const isLeaderB = isUserLeadingAuction(b.id);
       const favA = favorites.includes(a.productId) ? 1 : 0;
       const favB = favorites.includes(b.productId) ? 1 : 0;
 
-      // Favoris en premier
-      if (favA !== favB) {
-        return favB - favA; // 1 - 0 => favoris en haut
+      // 1. Leader en ABSOLU premier
+      if (isLeaderA !== isLeaderB) {
+        return isLeaderB ? 1 : -1; // true (1) avant false (0)
       }
 
-      // Ensuite tri selon sortBy
+      // 2. Ensuite les favoris
+      if (favA !== favB) {
+        return favB - favA;
+      }
+
+      // 3. Ensuite tri selon sortBy
       if (sortBy === "PRICE_ASC") {
         return a.currentPrice - b.currentPrice;
       }
@@ -182,7 +207,6 @@ export default function Homepage() {
         return b.currentPrice - a.currentPrice;
       }
 
-      // fallback éventuel (par date de fin, si tu le gardes)
       return new Date(a.endsAt).getTime() - new Date(b.endsAt).getTime();
     });
 
