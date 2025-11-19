@@ -81,7 +81,7 @@ const CountdownTimer = () => {
         .countdown-number {
           font-family: "Fredoka One", cursive;
           font-size: 5.5rem;
-          font-weight: 700;
+          font-weight: 100;
           color: white;
           margin-bottom: 0.1rem;
         }

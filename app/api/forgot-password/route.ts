@@ -49,7 +49,7 @@ export async function POST(request: Request) {
           <strong>Your new password:</strong> ${tempPassword}
         </div>
 
-        <p><strong>Important:</strong> Please change your password after logging in.</p>
+        <p><strong>Important:</strong> Please change your password in My Account page after logging in.</p>
 
         <p style="color: #666; font-size: 14px;">
           If you didn't request this, please contact support immediately.
