@@ -795,6 +795,8 @@ body {
 .section-deals {
   background: #c70b1e; /* rouge Noël sombre */
   color: #ffffff;
+  width: 100%;
+  flex: 1;
 }
 
 /* CELEBRATE : VERT PROFOND */
