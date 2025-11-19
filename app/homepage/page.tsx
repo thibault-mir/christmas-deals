@@ -319,7 +319,7 @@ export default function Homepage() {
             >
               <div className="about-image-wrapper">
                 <img
-                  src="/images/about-santa.jpg"
+                  src="/images/about-santa.png"
                   alt="Christmas Deals Event"
                   className="about-image"
                 />

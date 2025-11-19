@@ -260,7 +260,7 @@ export default function AccountPage() {
                   }}
                 >
                   <span className="send-password-icon">🔐</span>
-                  Send New Password
+                  Create New Password
                 </button>
               </div>
             </div>
