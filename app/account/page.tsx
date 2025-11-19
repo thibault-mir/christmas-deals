@@ -33,6 +33,13 @@ export default function AccountPage() {
   const [overlayData, setOverlayData] = useState<any[]>([]);
   const [overlayLoading, setOverlayLoading] = useState(false);
 
+  // Ajoute ces states en haut de ton composant
+  const [passwordPopup, setPasswordPopup] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [changingPassword, setChangingPassword] = useState(false);
+
   // Fonctions pour ouvrir les overlays
   const openBidsOverlay = async () => {
     setActiveOverlay("bids");
@@ -235,29 +242,7 @@ export default function AccountPage() {
               <div className="password-action">
                 <button
                   className="send-password-btn"
-                  onClick={async () => {
-                    try {
-                      const response = await fetch("/api/forgot-password", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ email: user.email }),
-                      });
-
-                      const data = await response.json();
-
-                      if (response.ok) {
-                        alert("✅ New password sent to your email!");
-                      } else {
-                        alert(
-                          "❌ Error sending password: " +
-                            (data.error || "Unknown error")
-                        );
-                      }
-                    } catch (error) {
-                      alert("❌ Error sending password");
-                      console.error("Send password error:", error);
-                    }
-                  }}
+                  onClick={() => setPasswordPopup(true)}
                 >
                   <span className="send-password-icon">🔐</span>
                   Create New Password
@@ -463,6 +448,164 @@ export default function AccountPage() {
                   ))}
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Popup Overlay pour changer le mot de passe */}
+      {passwordPopup && (
+        <div className="edit-overlay">
+          <div className="edit-popup">
+            <div className="edit-popup-header">
+              <h2>Change Your Password</h2>
+              <button
+                className="edit-close-btn"
+                onClick={() => {
+                  setPasswordPopup(false);
+                  setCurrentPassword("");
+                  setNewPassword("");
+                  setConfirmPassword("");
+                }}
+                disabled={changingPassword}
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="edit-popup-content">
+              <div className="edit-field">
+                <label htmlFor="current-password">Current Password</label>
+                <input
+                  id="current-password"
+                  type="password"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  placeholder="Enter your current password"
+                  disabled={changingPassword}
+                  className="edit-input"
+                />
+              </div>
+
+              <div className="edit-field">
+                <label htmlFor="new-password">New Password</label>
+                <input
+                  id="new-password"
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Enter your new password"
+                  disabled={changingPassword}
+                  className="edit-input"
+                />
+                <div className="password-requirements">
+                  Password must be at least 6 characters long
+                </div>
+              </div>
+
+              <div className="edit-field">
+                <label htmlFor="confirm-password">Confirm New Password</label>
+                <input
+                  id="confirm-password"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Confirm your new password"
+                  disabled={changingPassword}
+                  className="edit-input"
+                />
+                {newPassword &&
+                  confirmPassword &&
+                  newPassword !== confirmPassword && (
+                    <div className="password-error">Passwords do not match</div>
+                  )}
+              </div>
+
+              <div className="edit-popup-actions">
+                <button
+                  className="edit-cancel-btn"
+                  onClick={() => {
+                    setPasswordPopup(false);
+                    setCurrentPassword("");
+                    setNewPassword("");
+                    setConfirmPassword("");
+                  }}
+                  disabled={changingPassword}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="edit-save-btn"
+                  onClick={async () => {
+                    if (!currentPassword || !newPassword || !confirmPassword) {
+                      alert("Please fill in all fields");
+                      return;
+                    }
+
+                    if (newPassword.length < 6) {
+                      alert("Password must be at least 6 characters long");
+                      return;
+                    }
+
+                    if (newPassword !== confirmPassword) {
+                      alert("Passwords do not match");
+                      return;
+                    }
+
+                    setChangingPassword(true);
+                    try {
+                      const response = await fetch(
+                        "/api/user/change-password",
+                        {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({
+                            currentPassword,
+                            newPassword,
+                          }),
+                        }
+                      );
+
+                      const data = await response.json();
+
+                      if (response.ok) {
+                        alert("✅ Password updated successfully!");
+                        setPasswordPopup(false);
+                        setCurrentPassword("");
+                        setNewPassword("");
+                        setConfirmPassword("");
+                      } else {
+                        alert(
+                          "❌ Error: " +
+                            (data.error || "Failed to update password")
+                        );
+                      }
+                    } catch (error) {
+                      alert("❌ Error updating password");
+                      console.error("Change password error:", error);
+                    } finally {
+                      setChangingPassword(false);
+                    }
+                  }}
+                  disabled={
+                    changingPassword ||
+                    !currentPassword ||
+                    !newPassword ||
+                    !confirmPassword ||
+                    newPassword !== confirmPassword ||
+                    newPassword.length < 6
+                  }
+                >
+                  {changingPassword ? (
+                    <>
+                      <span className="loading-spinner-mini"></span>
+                      Updating...
+                    </>
+                  ) : (
+                    "Update Password"
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>
