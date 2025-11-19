@@ -7,6 +7,7 @@ export async function GET() {
     const auctions = await prisma.auction.findMany({
       select: {
         id: true,
+        estimatePrice: true,
         startingPrice: true,
         currentPrice: true,
         status: true,
@@ -47,17 +48,19 @@ export async function GET() {
     });
 
     // Formate les données pour inclure le meilleur enchérisseur
-    const auctionsWithTopBidder = auctions.map((auction) => ({
-      ...auction,
-      topBidder:
-        auction.bids.length > 0
-          ? {
-              user: auction.bids[0].user,
-              amount: auction.bids[0].amount,
-              bidAt: auction.bids[0].createdAt,
-            }
-          : null,
-    }));
+    const auctionsWithTopBidder = auctions.map(
+      (auction: (typeof auctions)[number]) => ({
+        ...auction,
+        topBidder:
+          auction.bids.length > 0
+            ? {
+                user: auction.bids[0].user,
+                amount: auction.bids[0].amount,
+                bidAt: auction.bids[0].createdAt,
+              }
+            : null,
+      })
+    );
 
     return NextResponse.json({ auctions: auctionsWithTopBidder });
   } catch (error) {
