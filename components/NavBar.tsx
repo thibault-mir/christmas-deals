@@ -189,7 +189,7 @@ export default function NavBar() {
             </Link>
             <Link
               href="#"
-              className="nav-mobile-account-item nav-mobile-account-logout"
+              className="nav-link nav-mobile-account-logout"
               onClick={async (e) => {
                 e.preventDefault(); // Empêche le comportement par défaut du Link
                 try {
@@ -213,7 +213,7 @@ export default function NavBar() {
                 }
               }}
             >
-              Log Out
+              ⏻ Log Out
             </Link>
           </div>
 
