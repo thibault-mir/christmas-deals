@@ -20,6 +20,7 @@ export interface DealCardProps {
   condition: Condition;
   category?: string;
   imageUrl?: string | null;
+  estimatePrice?: number; // <-- Prix éstimé
   currentPrice: number;
   startingPrice: number;
   bidStep: number;
@@ -70,6 +71,7 @@ export default function DealCard(props: DealCardProps) {
     condition,
     category,
     imageUrl,
+    estimatePrice,
     currentPrice,
     startingPrice,
     bidStep,
@@ -284,13 +286,13 @@ export default function DealCard(props: DealCardProps) {
 
             <div className="deal-card-footer">
               <div className="deal-card-countdown">
-                <span className="deal-card-label">Time Left</span>
+                <span className="deal-card-label">Est. Price</span>
                 <span
                   className={`deal-card-countdown-value ${
                     isEnded ? "ended" : ""
                   }`}
                 >
-                  {timeLeftLabel}
+                  {estimatePrice ? `${Math.floor(estimatePrice)} €` : "N/A"}
                 </span>
               </div>
 
