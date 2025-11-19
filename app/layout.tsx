@@ -1,6 +1,7 @@
 // app/layout.tsx
 import type { Metadata } from "next";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: "Christmas Deals by Servier",
@@ -32,12 +33,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr">
-      <head>
-        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
-        <meta name="theme-color" content="#07403a" />
-      </head>
-      <body>{children}</body>
-    </html>
+    <>
+      <Analytics />
+      <html lang="fr">
+        <head>
+          <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+          <meta name="theme-color" content="#07403a" />
+        </head>
+        <body>{children}</body>
+      </html>
+    </>
   );
 }
