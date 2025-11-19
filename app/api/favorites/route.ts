@@ -45,6 +45,7 @@ export async function POST(request: Request) {
     }
 
     if (action === "add") {
+      // Ajouter aux favoris
       await prisma.favorite.upsert({
         where: {
           userId_productId: {
@@ -58,11 +59,32 @@ export async function POST(request: Request) {
           productId,
         },
       });
+    } else if (action === "remove") {
+      // ⬅️ CORRECTION : Gérer la suppression
+      await prisma.favorite.delete({
+        where: {
+          userId_productId: {
+            userId: user.id,
+            productId,
+          },
+        },
+      });
+    } else {
+      return NextResponse.json({ error: "Invalid action" }, { status: 400 });
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Favorite error:", error);
+
+    // Gérer spécifiquement l'erreur "Record to delete does not exist"
+    if ((error as any).code === "P2025") {
+      return NextResponse.json({
+        success: true,
+        message: "Favorite already removed",
+      });
+    }
+
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
