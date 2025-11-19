@@ -4,7 +4,7 @@
 /* eslint-disable @next/next/no-img-element */
 // app/homepage/page.tsx
 "use client";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import ParticlesBackground from "@/components/ParticlesBackground";
 import Navbar from "@/components/NavBar";
@@ -47,6 +47,62 @@ export default function Homepage() {
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
 
   const [favorites, setFavorites] = useState<string[]>([]);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [status, setStatus] = useState<{ type: string; message: string }>({
+    type: "",
+    message: "",
+  });
+
+  const handleSubmitContact = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setStatus({ type: "", message: "" });
+
+    // Stocke la référence du formulaire avant la requête async
+    const form = e.currentTarget;
+
+    try {
+      const formData = new FormData(form);
+      const data = {
+        name: formData.get("name") as string,
+        email: formData.get("email") as string,
+        message: formData.get("message") as string,
+      };
+
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setStatus({
+          type: "success",
+          message: result.message || "Message envoyé avec succès !",
+        });
+        // Utilise la référence stockée
+        form.reset();
+      } else {
+        setStatus({
+          type: "error",
+          message: result.error || "Erreur lors de l'envoi",
+        });
+      }
+    } catch (error) {
+      console.error("Erreur:", error);
+      setStatus({
+        type: "error",
+        message: "Erreur de connexion avec le serveur",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     const loadFavorites = async () => {
@@ -418,9 +474,10 @@ export default function Homepage() {
               <h2 className="about-title">Celebrate</h2>
 
               <p className="about-lead">
-                Discover how this exclusive Christmas auction event works. Learn
-                about participation rules, auction mechanisms, and when you’ll
-                be able to place bids and win amazing holiday gifts.
+                Find out what’s happening for our end-of-year dinner. It all
+                takes place in Katterbroek, with everyone bringing a little
+                touch of boho chic—just come ready to enjoy good vibes and a
+                great night.
               </p>
 
               <div className="about-detail-list">
@@ -435,11 +492,12 @@ export default function Homepage() {
                       alt="Website Icon"
                     />
                     <p className="about-detail-title">
-                      <span>December 18 - 17h</span>
+                      <span>Thursday 18 December - 18h30</span>
                     </p>
                     <p className="about-detail-text">
-                      Auctions remain open 24/7 throughout the entire event.
-                      Winners are notified immediately once bidding closes.
+                      The evening kicks off at 18:30 and flows until around
+                      00:30. You’re free to enjoy the night’s vibe from start to
+                      finish.
                     </p>
                   </div>
                 </div>
@@ -455,11 +513,11 @@ export default function Homepage() {
                       alt="Website Icon"
                     />
                     <p className="about-detail-title">
-                      <span>Buxelles, 57 Boulevard International</span>
+                      <span>Elegemstraat 160 - 1700 Dilbeek</span>
                     </p>
                     <p className="about-detail-text">
-                      Every time you click “Bid”, the price increases by a fixed
-                      amount. When the timer hits zero, the highest bidder wins.
+                      The party happens in a place so fucking beautiful even the
+                      great Chuck Norris knocks before entering.
                     </p>
                   </div>
                 </div>
@@ -475,11 +533,18 @@ export default function Homepage() {
               }`}
             >
               <div className="about-image-wrapper">
-                <img
-                  src="/images/celebrate.jpg"
-                  alt="Christmas Deals Event"
-                  className="about-image"
-                />
+                <a
+                  href="https://kattebroek.be/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="about-image-link"
+                >
+                  <img
+                    src="/images/celebrate.jpg"
+                    alt="Christmas Deals Event"
+                    className="about-image"
+                  />
+                </a>
               </div>
             </div>
           </div>
@@ -508,7 +573,7 @@ export default function Homepage() {
                   <div>
                     <p className="contacts-info-label">Email</p>
                     <p className="contacts-info-value">
-                      christmas.deals@servier.com
+                      care4all.belux@servier.com
                     </p>
                   </div>
                 </div>
@@ -543,13 +608,7 @@ export default function Homepage() {
                 imageContacts.visible ? "visible" : ""
               }`}
             >
-              <form
-                className="contacts-form"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  alert("This is a demo form for now 🤭");
-                }}
-              >
+              <form className="contacts-form" onSubmit={handleSubmitContact}>
                 <h3 className="contacts-form-title">Send us a message</h3>
 
                 <div className="contacts-form-group">
@@ -558,10 +617,12 @@ export default function Homepage() {
                   </label>
                   <input
                     id="contact-name"
+                    name="name"
                     type="text"
                     className="contacts-input"
                     placeholder="Your name"
                     required
+                    disabled={isLoading}
                   />
                 </div>
 
@@ -571,10 +632,12 @@ export default function Homepage() {
                   </label>
                   <input
                     id="contact-email"
+                    name="email"
                     type="email"
                     className="contacts-input"
                     placeholder="you@servier.com"
                     required
+                    disabled={isLoading}
                   />
                 </div>
 
@@ -584,15 +647,51 @@ export default function Homepage() {
                   </label>
                   <textarea
                     id="contact-message"
+                    name="message"
                     className="contacts-textarea"
                     placeholder="How can we help you?"
                     rows={4}
                     required
+                    disabled={isLoading}
                   />
                 </div>
 
-                <button type="submit" className="contacts-submit">
-                  Send message
+                <button
+                  type="submit"
+                  className={`contacts-submit ${
+                    status.type === "success"
+                      ? "contacts-submit-success"
+                      : status.type === "error"
+                      ? "contacts-submit-error"
+                      : ""
+                  }`}
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <svg
+                        className="contacts-submit-spinner"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          fill="none"
+                          strokeDasharray="15.85 15.85"
+                        />
+                      </svg>
+                      Sending...
+                    </>
+                  ) : status.type === "success" ? (
+                    <>🎉 Message Sent !</>
+                  ) : status.type === "error" ? (
+                    <>⚠️ Something went wrong</>
+                  ) : (
+                    "Send message"
+                  )}
                 </button>
               </form>
             </div>
@@ -604,7 +703,7 @@ export default function Homepage() {
           <div className="footer-inner">
             <p className="footer-text">
               © {new Date().getFullYear()} Christmas Deals — Internal project
-              for Servier Belgium.
+              for Servier Belgium
             </p>
 
             <p className="footer-powered">

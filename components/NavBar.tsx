@@ -13,17 +13,73 @@ const SECTION_IDS = [
 ] as const;
 type SectionId = (typeof SECTION_IDS)[number];
 
+interface User {
+  id: string;
+  email: string;
+  name: string | null; // name peut être null dans ton schema
+}
+
 export default function NavBar() {
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState<SectionId>("home");
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [accountDropdown, setAccountDropdown] = useState(false);
+
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Récupère l'utilisateur connecté
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await fetch("/api/user/me");
+        if (response.ok) {
+          const data = await response.json();
+          setUser(data.user);
+        } else {
+          console.log("User not authenticated");
+        }
+      } catch (error) {
+        console.error("Failed to fetch user:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  // Fonction pour obtenir l'initial depuis le name ou l'email
+  const getUserInitial = () => {
+    if (!user) return "U";
+
+    // Priorité au name s'il existe
+    if (user.name) {
+      return user.name.charAt(0).toUpperCase();
+    }
+
+    // Sinon utilise l'email
+    return user.email.charAt(0).toUpperCase();
+  };
+
+  // Fonction pour obtenir le nom affichable
+  const getDisplayName = () => {
+    if (!user) return "User";
+
+    if (user.name) {
+      return user.name;
+    }
+
+    // Si pas de name, utilise la partie avant @ de l'email
+    return user.email.split("@")[0];
+  };
 
   useEffect(() => {
     const handleScroll = () => {
       const y = window.scrollY;
       setScrolled(y > 40);
 
-      const offset = 140; // marge pour tenir compte de la navbar
+      const offset = 140;
       let current: SectionId = "home";
 
       SECTION_IDS.forEach((id) => {
@@ -51,9 +107,12 @@ export default function NavBar() {
 
   const handleLinkClick = (id: SectionId) => {
     setActiveSection(id);
-    setMobileOpen(false); // on referme le menu sur mobile
+    setMobileOpen(false);
   };
 
+  const toggleAccountDropdown = () => {
+    setAccountDropdown(!accountDropdown);
+  };
   return (
     <header className={`navbar ${scrolled ? "navbar-scrolled" : ""}`}>
       <div className="nav-container">
@@ -119,8 +178,98 @@ export default function NavBar() {
           >
             Contacts
           </Link>
+          {/* Section Account - Visible seulement en mobile */}
+          <div className="nav-mobile-account">
+            <Link
+              href="/account"
+              className="nav-link"
+              onClick={() => setMobileOpen(false)}
+            >
+              My Account
+            </Link>
+            <Link
+              href="#"
+              className="nav-mobile-account-item nav-mobile-account-logout"
+              onClick={async (e) => {
+                e.preventDefault(); // Empêche le comportement par défaut du Link
+                try {
+                  const response = await fetch("/api/logout", {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                  });
+
+                  if (response.ok) {
+                    console.log("✅ Logout successful");
+                    window.location.href = "/";
+                  } else {
+                    console.error("❌ Logout failed");
+                  }
+                } catch (error) {
+                  console.error("❌ Logout error:", error);
+                } finally {
+                  setMobileOpen(false);
+                }
+              }}
+            >
+              Log Out
+            </Link>
+          </div>
+
+          {!loading && user && (
+            <div className="nav-account-wrapper">
+              <button
+                className="nav-avatar"
+                onClick={toggleAccountDropdown}
+                aria-label="Account menu"
+              >
+                <span className="nav-avatar-initial">{getUserInitial()}</span>
+              </button>
+
+              {accountDropdown && (
+                <div className="nav-dropdown">
+                  <div className="nav-dropdown-user-info">
+                    <div className="nav-dropdown-user-name">
+                      Welcome {getDisplayName()} !
+                    </div>
+                  </div>
+
+                  <Link
+                    href="/account"
+                    className="nav-dropdown-item"
+                    onClick={() => setAccountDropdown(false)}
+                  >
+                    My Account
+                  </Link>
+                  <button
+                    className="nav-dropdown-item nav-dropdown-logout"
+                    onClick={async () => {
+                      try {
+                        await fetch("/api/logout", { method: "POST" });
+                        window.location.href = "/";
+                      } catch (error) {
+                        console.error("Logout error:", error);
+                      } finally {
+                        setAccountDropdown(false);
+                      }
+                    }}
+                  >
+                    ⏻ Log Out
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </nav>
       </div>
+      {/* Overlay pour fermer le dropdown en cliquant ailleurs */}
+      {accountDropdown && (
+        <div
+          className="dropdown-overlay"
+          onClick={() => setAccountDropdown(false)}
+        />
+      )}
     </header>
   );
 }
