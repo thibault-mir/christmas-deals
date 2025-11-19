@@ -64,6 +64,7 @@ export async function GET(request: Request) {
         condition: a.product.condition,
         category: a.product.category,
         imageUrl: a.product.imageUrl,
+        estimatePrice: Number(a.estimatePrice),
         currentPrice: Number(a.currentPrice),
         startingPrice: Number(a.startingPrice),
         bidStep: Number(a.bidStep),
