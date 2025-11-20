@@ -48,28 +48,12 @@ function formatCondition(condition: Condition) {
   }
 }
 
-function formatTimeLeft(ms: number) {
-  if (ms <= 0) return "Enchère terminée";
-
-  const totalSeconds = Math.floor(ms / 1000);
-  const days = Math.floor(totalSeconds / (3600 * 24));
-  const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = totalSeconds % 60;
-
-  if (days > 0) return `${days}j ${hours}h`;
-  if (hours > 0) return `${hours}h ${minutes}m`;
-  if (minutes > 0) return `${minutes}m ${seconds}s`;
-  return `${seconds}s`;
-}
-
 export default function DealCard(props: DealCardProps) {
   const {
     id,
     name,
     description,
     condition,
-    category,
     imageUrl,
     estimatePrice,
     currentPrice,
@@ -93,10 +77,32 @@ export default function DealCard(props: DealCardProps) {
 
   // Historique
   const [showHistory, setShowHistory] = useState(false);
+  const [showContextMenu, setShowContextMenu] = useState(false);
+  const [showImageModal, setShowImageModal] = useState(false);
   const [bids, setBids] = useState<BidHistoryItem[]>([]);
   const [loadingBids, setLoadingBids] = useState(false);
   const [bidsError, setBidsError] = useState<string | null>(null);
   const [hasLoadedBids, setHasLoadedBids] = useState(false);
+  // States pour gérer les actions en cours
+  const [pendingAction, setPendingAction] = useState<"history" | null>(null);
+
+  // Fonction pour ouvrir l'historique
+  const openBidHistory = async () => {
+    if (!hasLoadedBids && !loadingBids) {
+      setPendingAction("history");
+      await loadBids();
+      setPendingAction(null);
+    }
+
+    setShowContextMenu(false);
+    setShowHistory(true);
+  };
+
+  // Fonction pour ouvrir l'image (instantanée)
+  const openFullscreenImage = () => {
+    setShowContextMenu(false);
+    setShowImageModal(true);
+  };
 
   // 🔁 Sync quand la prop vient de changer (ex : après /api/favorites)
   useEffect(() => {
@@ -121,7 +127,6 @@ export default function DealCard(props: DealCardProps) {
 
   const endTime = new Date(endsAt).getTime();
   const timeLeft = endTime - now;
-  const timeLeftLabel = formatTimeLeft(timeLeft);
   const isEnded = timeLeft <= 0;
 
   // Fonction pour gérer les favoris
@@ -217,13 +222,29 @@ export default function DealCard(props: DealCardProps) {
     }
   };
 
-  const handleCardClick = async () => {
-    const next = !showHistory;
-    setShowHistory(next);
-    if (next && !hasLoadedBids) {
-      await loadBids();
+  const getFullscreenImageUrl = (imageUrl?: string | null) => {
+    if (!imageUrl) return "/images/placeholder.jpg";
+
+    // Si c'est déjà une URL externe, on la garde
+    if (imageUrl.startsWith("http")) {
+      return imageUrl;
     }
+
+    // Remplace le dossier "deals" par "deals_FS"
+    return imageUrl.replace("/deals/", "/deals_FS/");
   };
+
+  // Et dans le composant, tu peux précharger ou vérifier l'existence
+  const [fullscreenImageLoaded, setFullscreenImageLoaded] = useState(false);
+
+  useEffect(() => {
+    if (showImageModal && imageUrl) {
+      const img = new Image();
+      img.src = getFullscreenImageUrl(imageUrl);
+      img.onload = () => setFullscreenImageLoaded(true);
+      img.onerror = () => setFullscreenImageLoaded(false);
+    }
+  }, [showImageModal, imageUrl]);
 
   return (
     <>
@@ -231,7 +252,7 @@ export default function DealCard(props: DealCardProps) {
         className={`deal-card ${isLeading ? "deal-card-leading" : ""} ${
           showHistory ? "history-mode" : ""
         }`}
-        onClick={handleCardClick}
+        onClick={() => setShowContextMenu(true)}
       >
         {/* Bouton favori en haut à droite */}
         <button
@@ -328,6 +349,113 @@ export default function DealCard(props: DealCardProps) {
           </div>
         </div>
       </article>
+
+      {showContextMenu && (
+        <div
+          className="bid-modal-overlay"
+          onClick={() => setShowContextMenu(false)}
+        >
+          <div
+            className="bid-modal history-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="history-header">
+              <h3>Choose Action - {name}</h3>
+              <button
+                className="history-close"
+                onClick={() => setShowContextMenu(false)}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="history-content">
+              <div className="context-actions">
+                <button
+                  className="context-action-btn image-action"
+                  onClick={openFullscreenImage}
+                >
+                  <div className="action-icon">🖼️</div>
+                  <div className="action-content">
+                    <div className="action-title">View Full Image</div>
+                    <div className="action-subtitle">
+                      See product in high resolution
+                    </div>
+                  </div>
+                  <div className="action-arrow">→</div>
+                </button>
+
+                <button
+                  className="context-action-btn history-action"
+                  onClick={openBidHistory}
+                  disabled={pendingAction === "history"}
+                >
+                  <div className="action-icon">
+                    {pendingAction === "history" ? "⏳" : "📊"}
+                  </div>
+                  <div className="action-content">
+                    <div className="action-title">
+                      View Bid History
+                      {pendingAction === "history" && " (Loading...)"}
+                    </div>
+                    <div className="action-subtitle">
+                      {bids.length} bids placed
+                    </div>
+                  </div>
+                  <div className="action-arrow">
+                    {pendingAction === "history" ? "" : "→"}
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showImageModal && (
+        <div
+          className="image-modal-overlay"
+          onClick={() => setShowImageModal(false)}
+        >
+          <button
+            className="image-modal-close"
+            onClick={() => setShowImageModal(false)}
+          >
+            ✕
+          </button>
+
+          <div className="image-modal-content">
+            <img
+              src={getFullscreenImageUrl(imageUrl)}
+              alt={name}
+              className="fullscreen-image"
+              onError={(e) => {
+                // Si l'image fullscreen n'existe pas, utilise l'image normale
+                console.log(
+                  "Fullscreen image not found, falling back to regular image"
+                );
+                e.currentTarget.src = imageUrl || "/images/placeholder.jpg";
+              }}
+              onLoad={() => console.log("Fullscreen image loaded successfully")}
+            />
+            <div className="image-modal-info">
+              <h3>{name}</h3>
+              <p>{description}</p>
+              {!fullscreenImageLoaded && (
+                <p
+                  style={{
+                    fontSize: "0.9rem",
+                    opacity: 0.7,
+                    fontStyle: "italic",
+                  }}
+                >
+                  Showing standard resolution image
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal d'historique */}
       {showHistory && (
