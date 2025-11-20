@@ -582,6 +582,12 @@ export default function Homepage() {
 
         {/* CONTACTS */}
         <section id="contacts" className="section section-contacts">
+          <ParticlesBackground
+            mode="section"
+            id="particles-contacts"
+            density={140}
+            size={4}
+          />
           <div className="section-inner contacts-grid">
             <div
               data-reveal="left"
