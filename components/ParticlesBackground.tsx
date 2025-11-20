@@ -2,21 +2,19 @@
 "use client";
 
 import Script from "next/script";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 declare global {
   interface Window {
     particlesJS: any;
-    pJSDom: any[];
   }
 }
 
 type ParticlesBackgroundProps = {
   mode?: "full" | "section";
   id?: string;
-  density?: number;
-  size?: number;
-  responsive?: boolean;
+  density?: number; // ← nouveau : nombre de particules
+  size?: number; // ← nouveau : taille des flocons
 };
 
 export default function ParticlesBackground({
@@ -24,11 +22,7 @@ export default function ParticlesBackground({
   id = "particles-js-hero",
   density = 100,
   size = 4,
-  responsive = true,
 }: ParticlesBackgroundProps) {
-  const [responsiveDensity, setResponsiveDensity] = useState(density);
-  const [responsiveSize, setResponsiveSize] = useState(size);
-
   const style =
     mode === "full"
       ? {
@@ -47,30 +41,6 @@ export default function ParticlesBackground({
           pointerEvents: "none" as const,
         };
 
-  // Gestion du responsive
-  useEffect(() => {
-    if (!responsive || typeof window === "undefined") return;
-
-    const updateResponsiveSettings = () => {
-      const width = window.innerWidth;
-      if (width < 768) {
-        setResponsiveDensity(30);
-        setResponsiveSize(1.5);
-      } else if (width < 1024) {
-        setResponsiveDensity(70);
-        setResponsiveSize(3);
-      } else {
-        setResponsiveDensity(density);
-        setResponsiveSize(size);
-      }
-    };
-
-    updateResponsiveSettings();
-    window.addEventListener("resize", updateResponsiveSettings);
-
-    return () => window.removeEventListener("resize", updateResponsiveSettings);
-  }, [responsive, density, size]);
-
   const initParticles = () => {
     if (
       typeof window === "undefined" ||
@@ -80,20 +50,10 @@ export default function ParticlesBackground({
       return;
     }
 
-    // Détruit les particules existantes avant de re-créer
-    if (window.pJSDom && window.pJSDom.length > 0) {
-      window.pJSDom.forEach((pJS: any) => {
-        if (pJS.pJS && pJS.pJS.fn && pJS.pJS.fn.vendors) {
-          pJS.pJS.fn.vendors.destroy();
-        }
-      });
-      window.pJSDom = [];
-    }
-
     window.particlesJS(id, {
       particles: {
         number: {
-          value: responsiveDensity,
+          value: density, // ← utilise la prop
           density: {
             enable: true,
             value_area: 800,
@@ -116,7 +76,7 @@ export default function ParticlesBackground({
           },
         },
         size: {
-          value: responsiveSize,
+          value: size, // ← utilise la prop
           random: true,
           anim: {
             enable: true,
@@ -155,7 +115,6 @@ export default function ParticlesBackground({
     });
   };
 
-  // Re-initialise les particules quand les paramètres responsive changent
   useEffect(() => {
     let tries = 0;
     const interval = setInterval(() => {
@@ -170,7 +129,8 @@ export default function ParticlesBackground({
     }, 200);
 
     return () => clearInterval(interval);
-  }, [id, responsiveDensity, responsiveSize]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, density, size]);
 
   return (
     <>
