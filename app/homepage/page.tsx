@@ -359,8 +359,14 @@ export default function Homepage() {
               key={`particles-${selectedCategory}-${sortBy}-${visibleDeals.length}`} // Re-render quand les filtres changent
               mode="section"
               id="particles-deals"
-              density={140}
-              size={4}
+              density={
+                typeof window !== "undefined" && window.innerWidth < 768
+                  ? 40
+                  : 140
+              }
+              size={
+                typeof window !== "undefined" && window.innerWidth < 768 ? 2 : 4
+              }
             />
           )}
           <div className="section-inner">
