@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @next/next/no-img-element */
@@ -19,6 +20,22 @@ export default function Homepage() {
   const imageCelebrate = useReveal();
   const textContacts = useReveal();
   const imageContacts = useReveal();
+  const [deals, setDeals] = useState<DealCardProps[]>([]);
+  const [loadingDeals, setLoadingDeals] = useState(true);
+  const [dealsError, setDealsError] = useState("");
+
+  const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
+  const [sortBy, setSortBy] = useState<"PRICE_ASC" | "PRICE_DESC">("PRICE_ASC");
+  const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
+
+  const [favorites, setFavorites] = useState<string[]>([]);
+  const [leadingDeals, setLeadingDeals] = useState<string[]>([]);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [status, setStatus] = useState<{ type: string; message: string }>({
+    type: "",
+    message: "",
+  });
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -36,23 +53,6 @@ export default function Homepage() {
 
     checkAuth();
   }, [router]);
-
-  const [deals, setDeals] = useState<DealCardProps[]>([]);
-  const [loadingDeals, setLoadingDeals] = useState(true);
-  const [dealsError, setDealsError] = useState("");
-
-  const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
-  const [sortBy, setSortBy] = useState<"PRICE_ASC" | "PRICE_DESC">("PRICE_ASC");
-  const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
-
-  const [favorites, setFavorites] = useState<string[]>([]);
-  const [leadingDeals, setLeadingDeals] = useState<string[]>([]);
-
-  const [isLoading, setIsLoading] = useState(false);
-  const [status, setStatus] = useState<{ type: string; message: string }>({
-    type: "",
-    message: "",
-  });
 
   const handleSubmitContact = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -211,7 +211,14 @@ export default function Homepage() {
     });
 
     return list;
-  }, [deals, selectedCategory, sortBy, favorites, showOnlyFavorites]);
+  }, [
+    deals,
+    showOnlyFavorites,
+    selectedCategory,
+    favorites,
+    isUserLeadingAuction,
+    sortBy,
+  ]);
 
   return (
     <div className="site-wrapper">
@@ -356,17 +363,12 @@ export default function Homepage() {
         <section id="deals" className="section section-deals section-about">
           {!loadingDeals && deals.length > 0 && (
             <ParticlesBackground
-              key={`particles-${selectedCategory}-${sortBy}-${visibleDeals.length}`} // Re-render quand les filtres changent
+              key={`particles-${selectedCategory}-${sortBy}-${visibleDeals.length}`}
               mode="section"
               id="particles-deals"
-              density={
-                typeof window !== "undefined" && window.innerWidth < 768
-                  ? 40
-                  : 140
-              }
-              size={
-                typeof window !== "undefined" && window.innerWidth < 768 ? 2 : 4
-              }
+              density={140}
+              size={4}
+              responsive={true} // Active la détection responsive
             />
           )}
           <div className="section-inner">
