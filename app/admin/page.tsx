@@ -5,6 +5,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import styles from "./AdminTabs.module.css";
 import Link from "next/link";
 
 interface User {
@@ -256,16 +257,16 @@ export default function AdminPage() {
 }
 
 // Composant pour l'onglet Users - Version Mobile
+
 function UsersTab({ users }: { users: User[] }) {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    const options: Intl.DateTimeFormatOptions = {
+    return date.toLocaleDateString("fr-FR", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
       timeZone: "Europe/Brussels",
-    };
-    return date.toLocaleDateString("fr-FR", options);
+    });
   };
 
   return (
@@ -275,96 +276,41 @@ function UsersTab({ users }: { users: User[] }) {
       </h2>
 
       {/* Version Desktop */}
-      <div
-        style={{
-          background: "rgba(2, 37, 34, 0.6)",
-          borderRadius: "12px",
-          overflow: "hidden",
-          display: "none", // Caché sur mobile
-          "@media (min-width: 768px)": {
-            display: "block",
-          },
-        }}
-      >
+      <div className={`${styles.desktopOnly} ${styles.cardBg}`}>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ background: "rgba(0, 201, 167, 0.2)" }}>
-              <th
-                style={{
-                  padding: "16px",
-                  textAlign: "left",
-                  borderBottom: "1px solid rgba(255,255,255,0.1)",
-                }}
-              >
-                User
-              </th>
-              <th
-                style={{
-                  padding: "16px",
-                  textAlign: "left",
-                  borderBottom: "1px solid rgba(255,255,255,0.1)",
-                }}
-              >
-                Bids
-              </th>
-              <th
-                style={{
-                  padding: "16px",
-                  textAlign: "left",
-                  borderBottom: "1px solid rgba(255,255,255,0.1)",
-                }}
-              >
-                Favorites
-              </th>
-              <th
-                style={{
-                  padding: "16px",
-                  textAlign: "left",
-                  borderBottom: "1px solid rgba(255,255,255,0.1)",
-                }}
-              >
+              <th style={{ padding: "16px", textAlign: "left" }}>User</th>
+              <th style={{ padding: "16px", textAlign: "left" }}>Bids</th>
+              <th style={{ padding: "16px", textAlign: "left" }}>Favorites</th>
+              <th style={{ padding: "16px", textAlign: "left" }}>
                 Deals Leading
               </th>
-              <th
-                style={{
-                  padding: "16px",
-                  textAlign: "left",
-                  borderBottom: "1px solid rgba(255,255,255,0.1)",
-                }}
-              >
-                Joined
-              </th>
+              <th style={{ padding: "16px", textAlign: "left" }}>Joined</th>
             </tr>
           </thead>
           <tbody>
             {users.map((user) => (
               <tr
                 key={user.id}
-                style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}
+                style={{
+                  borderBottom: "1px solid rgba(255,255,255,0.05)",
+                }}
               >
                 <td style={{ padding: "16px" }}>
                   <div>
                     <div style={{ fontWeight: "600" }}>
                       {user.name || "No name"}
                     </div>
-                    <div style={{ opacity: 0.7, fontSize: "0.9rem" }}>
-                      {user.email}
-                    </div>
+                    <div style={{ opacity: 0.7 }}>{user.email}</div>
                   </div>
                 </td>
+
                 <td style={{ padding: "16px" }}>{user._count.bids}</td>
                 <td style={{ padding: "16px" }}>{user._count.favorites}</td>
-                <td style={{ padding: "16px" }}>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "8px",
-                    }}
-                  >
-                    {user.leadingDeals}
-                  </div>
-                </td>
+
+                <td style={{ padding: "16px" }}>{user.leadingDeals}</td>
+
                 <td style={{ padding: "16px" }}>
                   {formatDate(user.createdAt)}
                 </td>
@@ -375,42 +321,18 @@ function UsersTab({ users }: { users: User[] }) {
       </div>
 
       {/* Version Mobile */}
-      <div
-        style={{
-          display: "grid",
-          gap: "12px",
-          "@media (min-width: 768px)": {
-            display: "none",
-          },
-        }}
-      >
+      <div className={styles.mobileOnly}>
         {users.map((user) => (
           <div
             key={user.id}
-            style={{
-              background: "rgba(2, 37, 34, 0.6)",
-              padding: "16px",
-              borderRadius: "12px",
-              border: "1px solid rgba(255,255,255,0.1)",
-            }}
+            className={styles.cardBg}
+            style={{ padding: "16px", marginBottom: "10px" }}
           >
             <div style={{ marginBottom: "12px" }}>
-              <div
-                style={{
-                  fontWeight: "600",
-                  fontSize: "1.1rem",
-                  marginBottom: "4px",
-                }}
-              >
+              <div style={{ fontWeight: "600", fontSize: "1.1rem" }}>
                 {user.name || "No name"}
               </div>
-              <div
-                style={{
-                  opacity: 0.7,
-                  fontSize: "0.9rem",
-                  wordBreak: "break-all",
-                }}
-              >
+              <div style={{ opacity: 0.7, fontSize: "0.9rem" }}>
                 {user.email}
               </div>
             </div>
@@ -420,26 +342,28 @@ function UsersTab({ users }: { users: User[] }) {
                 display: "grid",
                 gridTemplateColumns: "1fr 1fr",
                 gap: "10px",
-                fontSize: "0.9rem",
               }}
             >
-              <div style={{ display: "flex", flexDirection: "column" }}>
+              <div>
                 <span style={{ opacity: 0.7 }}>Bids</span>
                 <span style={{ fontWeight: "600" }}>{user._count.bids}</span>
               </div>
-              <div style={{ display: "flex", flexDirection: "column" }}>
+
+              <div>
                 <span style={{ opacity: 0.7 }}>Favorites</span>
                 <span style={{ fontWeight: "600" }}>
                   {user._count.favorites}
                 </span>
               </div>
-              <div style={{ display: "flex", flexDirection: "column" }}>
+
+              <div>
                 <span style={{ opacity: 0.7 }}>Deals Leading</span>
                 <span style={{ fontWeight: "600" }}>
                   {user.leadingDeals || 0}
                 </span>
               </div>
-              <div style={{ display: "flex", flexDirection: "column" }}>
+
+              <div>
                 <span style={{ opacity: 0.7 }}>Joined</span>
                 <span style={{ fontWeight: "600" }}>
                   {formatDate(user.createdAt)}
@@ -472,49 +396,29 @@ function ProductsTab({ products }: { products: Product[] }) {
         Products Management
       </h2>
 
-      {/* Version Desktop */}
-      <div
-        style={{
-          display: "none",
-          "@media (min-width: 768px)": {
-            display: "grid",
-            gap: "20px",
-          },
-        }}
-      >
+      {/* Desktop grid */}
+      <div className={styles.desktopGrid}>
         {products.map((product) => (
           <div
             key={product.id}
-            style={{
-              background: "rgba(2, 37, 34, 0.6)",
-              padding: "20px",
-              borderRadius: "12px",
-              border: "1px solid rgba(255,255,255,0.1)",
-            }}
+            className={styles.cardBg}
+            style={{ padding: "20px" }}
           >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "start",
-              }}
-            >
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
               <div>
-                <h3 style={{ margin: "0 0 8px 0" }}>{product.name}</h3>
-                <p style={{ margin: "0 0 12px 0", opacity: 0.8 }}>
-                  {product.description}
-                </p>
-                <div
-                  style={{ display: "flex", gap: "15px", fontSize: "0.9rem" }}
-                >
+                <h3>{product.name}</h3>
+                <p style={{ opacity: 0.8 }}>{product.description}</p>
+
+                <div style={{ display: "flex", gap: "15px" }}>
                   <span>Condition: {product.condition}</span>
                   <span>Category: {product.category}</span>
                   <span>Auctions: {product._count.auctions}</span>
                   <span>Favorites: {product._count.favorites}</span>
-                  <span>Total Bids: {product.totalBids}</span> {/* ← AJOUT */}
+                  <span>Total Bids: {product.totalBids}</span>
                 </div>
               </div>
-              <div style={{ fontSize: "0.9rem", opacity: 0.7 }}>
+
+              <div style={{ opacity: 0.7 }}>
                 Created: {formatDate(product.createdAt)}
               </div>
             </div>
@@ -522,95 +426,54 @@ function ProductsTab({ products }: { products: Product[] }) {
         ))}
       </div>
 
-      {/* Version Mobile */}
-      <div
-        style={{
-          display: "grid",
-          gap: "16px",
-          "@media (min_width: 768px)": {
-            display: "none",
-          },
-        }}
-      >
+      {/* Mobile */}
+      <div className={styles.mobileOnly}>
         {products.map((product) => (
           <div
             key={product.id}
-            style={{
-              background: "rgba(2, 37, 34, 0.6)",
-              padding: "16px",
-              borderRadius: "12px",
-              border: "1px solid rgba(255,255,255,0.1)",
-            }}
+            className={styles.cardBg}
+            style={{ padding: "16px" }}
           >
-            <div style={{ marginBottom: "12px" }}>
-              <h3 style={{ margin: "0 0 8px 0", fontSize: "1.1rem" }}>
-                {product.name}
-              </h3>
-              <p
-                style={{
-                  margin: "0 0 12px 0",
-                  opacity: 0.8,
-                  fontSize: "0.9rem",
-                  display: "-webkit-box",
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: "vertical",
-                  overflow: "hidden",
-                }}
-              >
-                {product.description}
-              </p>
-            </div>
+            <h3>{product.name}</h3>
+
+            <p
+              style={{
+                opacity: 0.8,
+                display: "-webkit-box",
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+              }}
+            >
+              {product.description}
+            </p>
 
             <div
               style={{
                 display: "grid",
                 gridTemplateColumns: "1fr 1fr",
-                gap: "12px 8px",
-                fontSize: "0.85rem",
+                gap: "8px",
                 marginBottom: "12px",
               }}
             >
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <span style={{ opacity: 0.7 }}>Condition</span>
-                <span style={{ fontWeight: "600" }}>{product.condition}</span>
+              <div>
+                Condition: <strong>{product.condition}</strong>
               </div>
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <span style={{ opacity: 0.7 }}>Category</span>
-                <span style={{ fontWeight: "600" }}>{product.category}</span>
+              <div>
+                Category: <strong>{product.category}</strong>
               </div>
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <span style={{ opacity: 0.7 }}>Auctions</span>
-                <span style={{ fontWeight: "600" }}>
-                  {product._count.auctions}
-                </span>
+              <div>
+                Auctions: <strong>{product._count.auctions}</strong>
               </div>
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <span style={{ opacity: 0.7 }}>Favorites</span>
-                <span style={{ fontWeight: "600" }}>
-                  {product._count.favorites}
-                </span>
+              <div>
+                Favorites: <strong>{product._count.favorites}</strong>
               </div>
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <span style={{ opacity: 0.7 }}>Total Bids</span> {/* ← AJOUT */}
-                <span
-                  style={{
-                    fontWeight: "600",
-                    color: product.totalBids > 0 ? "#00c9a7" : "inherit",
-                  }}
-                >
-                  {product.totalBids}
-                </span>
+              <div>
+                Total Bids: <strong>{product.totalBids}</strong>
               </div>
             </div>
 
-            <div
-              style={{
-                fontSize: "0.8rem",
-                opacity: 0.7,
-                borderTop: "1px solid rgba(255,255,255,0.1)",
-                paddingTop: "12px",
-              }}
-            >
+            <div style={{ opacity: 0.7 }}>
               Created: {formatDate(product.createdAt)}
             </div>
           </div>
