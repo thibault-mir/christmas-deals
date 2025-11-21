@@ -16,7 +16,7 @@ type SectionId = (typeof SECTION_IDS)[number];
 interface User {
   id: string;
   email: string;
-  name: string | null; // name peut être null dans ton schema
+  name: string | null;
 }
 
 export default function NavBar() {
@@ -49,16 +49,17 @@ export default function NavBar() {
     fetchUser();
   }, []);
 
+  // Fonction pour vérifier si l'utilisateur est admin
+  const isAdmin = user?.email === "test@test.com";
+
   // Fonction pour obtenir l'initial depuis le name ou l'email
   const getUserInitial = () => {
     if (!user) return "U";
 
-    // Priorité au name s'il existe
     if (user.name) {
       return user.name.charAt(0).toUpperCase();
     }
 
-    // Sinon utilise l'email
     return user.email.charAt(0).toUpperCase();
   };
 
@@ -70,7 +71,6 @@ export default function NavBar() {
       return user.name;
     }
 
-    // Si pas de name, utilise la partie avant @ de l'email
     return user.email.split("@")[0];
   };
 
@@ -113,6 +113,7 @@ export default function NavBar() {
   const toggleAccountDropdown = () => {
     setAccountDropdown(!accountDropdown);
   };
+
   return (
     <header className={`navbar ${scrolled ? "navbar-scrolled" : ""}`}>
       <div className="nav-container">
@@ -142,7 +143,11 @@ export default function NavBar() {
         </button>
 
         {/* Menu */}
-        <nav className={`nav-menu ${mobileOpen ? "nav-menu-open" : ""}`}>
+        <nav
+          className={`nav-menu ${mobileOpen ? "nav-menu-open" : ""} ${
+            mobileOpen && isAdmin ? "nav-menu-open-admin" : ""
+          }`}
+        >
           <Link
             href="#home"
             className={linkClass("home")}
@@ -178,6 +183,7 @@ export default function NavBar() {
           >
             Contacts
           </Link>
+
           {/* Section Account - Visible seulement en mobile */}
           <div className="nav-mobile-account">
             <div className="nav-link">Welcome {getDisplayName()} !</div>
@@ -188,11 +194,26 @@ export default function NavBar() {
             >
               My Account
             </Link>
+
+            {/* Lien Admin Console pour mobile */}
+            {isAdmin && (
+              <Link
+                href="/admin"
+                className="nav-link"
+                onClick={() => setMobileOpen(false)}
+                style={{
+                  color: "#00c9a7",
+                }}
+              >
+                Admin Console
+              </Link>
+            )}
+
             <Link
               href="#"
               className="nav-link nav-mobile-account-logout"
               onClick={async (e) => {
-                e.preventDefault(); // Empêche le comportement par défaut du Link
+                e.preventDefault();
                 try {
                   const response = await fetch("/api/logout", {
                     method: "POST",
@@ -234,13 +255,51 @@ export default function NavBar() {
                 aria-label="Account menu"
               >
                 <span className="nav-avatar-initial">{getUserInitial()}</span>
+                {isAdmin && (
+                  <span
+                    className="nav-avatar-badge"
+                    style={{
+                      position: "absolute",
+                      top: "-2px",
+                      right: "-2px",
+                      background: "#00c9a7",
+                      color: "#013932",
+                      borderRadius: "50%",
+                      width: "12px",
+                      height: "12px",
+                      fontSize: "8px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    A
+                  </span>
+                )}
               </button>
 
               {accountDropdown && (
                 <div className="nav-dropdown">
                   <div className="nav-dropdown-user-info">
                     <div className="nav-dropdown-user-name">
-                      Welcome {getDisplayName()} !
+                      Welcome <br />
+                      {getDisplayName()} !
+                      {isAdmin && (
+                        <span
+                          style={{
+                            background: "#00c9a7",
+                            color: "#013932",
+                            fontSize: "0.7rem",
+                            padding: "2px 6px",
+                            borderRadius: "10px",
+                            marginLeft: "8px",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          ADMIN
+                        </span>
+                      )}
                     </div>
                   </div>
 
@@ -251,6 +310,21 @@ export default function NavBar() {
                   >
                     My Account
                   </Link>
+
+                  {/* Lien Admin Console pour desktop */}
+                  {isAdmin && (
+                    <Link
+                      href="/admin"
+                      className="nav-dropdown-item"
+                      onClick={() => setAccountDropdown(false)}
+                      style={{
+                        color: "#00c9a7",
+                      }}
+                    >
+                      Admin Console
+                    </Link>
+                  )}
+
                   <button
                     className="nav-dropdown-item nav-dropdown-logout"
                     onClick={async () => {

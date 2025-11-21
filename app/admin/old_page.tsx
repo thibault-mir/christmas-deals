@@ -16,7 +16,7 @@ interface User {
     bids: number;
     favorites: number;
   };
-  leadingDeals?: number;
+  leadingDeals?: number; // ← Nouvelle propriété
 }
 
 interface Product {
@@ -30,13 +30,6 @@ interface Product {
     auctions: number;
     favorites: number;
   };
-  totalBids: number; // ← Nouvelle propriété
-  auctions: Array<{
-    // ← Ajouté pour le calcul
-    _count: {
-      bids: number;
-    };
-  }>;
 }
 
 interface Auction {
@@ -87,6 +80,8 @@ export default function AdminPage() {
     try {
       setLoading(true);
 
+      // En vrai, tu ferais des appels API séparés
+      // Pour l'instant on simule avec des données
       const usersRes = await fetch("/api/admin/users");
       const productsRes = await fetch("/api/admin/products");
       const auctionsRes = await fetch("/api/admin/auctions");
@@ -148,35 +143,6 @@ export default function AdminPage() {
                 Christmas Deals - BackOffice
               </p>
             </div>
-            {/* Bouton Back à droite */}
-            <Link
-              href="/homepage"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                background: "rgba(0, 201, 167, 0.2)",
-                color: "#00c9a7",
-                border: "1px solid rgba(0, 201, 167, 0.3)",
-                padding: "10px 16px",
-                borderRadius: "8px",
-                textDecoration: "none",
-                fontWeight: "600",
-                transition: "all 0.3s ease",
-                fontSize: "0.9rem",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = "rgba(0, 201, 167, 0.3)";
-                e.currentTarget.style.transform = "translateX(2px)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = "rgba(0, 201, 167, 0.2)";
-                e.currentTarget.style.transform = "translateX(0)";
-              }}
-            >
-              <span style={{ fontSize: "1.1rem" }}>←</span>
-              Back to Site
-            </Link>
           </div>
         </div>
       </header>
@@ -192,14 +158,7 @@ export default function AdminPage() {
         <div
           style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 20px" }}
         >
-          <div
-            style={{
-              display: "flex",
-              gap: "10px",
-              flexWrap: "wrap",
-              justifyContent: "center",
-            }}
-          >
+          <div style={{ display: "flex", gap: "30px" }}>
             {[
               { key: "users", label: `Users (${users.length})`, icon: "👥" },
               {
@@ -220,15 +179,11 @@ export default function AdminPage() {
                   background: activeTab === tab.key ? "#00c9a7" : "transparent",
                   color: activeTab === tab.key ? "#013932" : "white",
                   border: "none",
-                  padding: "12px 16px",
+                  padding: "12px 24px",
                   borderRadius: "8px",
                   cursor: "pointer",
                   fontWeight: "600",
                   transition: "all 0.3s ease",
-                  fontSize: "0.9rem",
-                  flex: "1",
-                  minWidth: "120px",
-                  maxWidth: "200px",
                 }}
               >
                 {tab.icon} {tab.label}
@@ -240,12 +195,7 @@ export default function AdminPage() {
 
       {/* Content */}
       <div
-        style={{
-          maxWidth: "1200px",
-          margin: "0 auto",
-          padding: "20px 15px",
-          overflowX: "hidden",
-        }}
+        style={{ maxWidth: "1200px", margin: "0 auto", padding: "40px 20px" }}
       >
         {activeTab === "users" && <UsersTab users={users} />}
         {activeTab === "products" && <ProductsTab products={products} />}
@@ -255,7 +205,7 @@ export default function AdminPage() {
   );
 }
 
-// Composant pour l'onglet Users - Version Mobile
+// Composant pour l'onglet Users
 function UsersTab({ users }: { users: User[] }) {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -270,20 +220,12 @@ function UsersTab({ users }: { users: User[] }) {
 
   return (
     <div>
-      <h2 style={{ marginBottom: "20px", fontSize: "1.5rem" }}>
-        Users Management
-      </h2>
-
-      {/* Version Desktop */}
+      <h2 style={{ marginBottom: "30px" }}>Users Management</h2>
       <div
         style={{
           background: "rgba(2, 37, 34, 0.6)",
           borderRadius: "12px",
           overflow: "hidden",
-          display: "none", // Caché sur mobile
-          "@media (min-width: 768px)": {
-            display: "block",
-          },
         }}
       >
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
@@ -360,6 +302,10 @@ function UsersTab({ users }: { users: User[] }) {
                       display: "flex",
                       alignItems: "center",
                       gap: "8px",
+                      color:
+                        user.leadingDeals && user.leadingDeals > 0
+                          ? "#fff"
+                          : "inherit",
                     }}
                   >
                     {user.leadingDeals}
@@ -373,115 +319,30 @@ function UsersTab({ users }: { users: User[] }) {
           </tbody>
         </table>
       </div>
-
-      {/* Version Mobile */}
-      <div
-        style={{
-          display: "grid",
-          gap: "12px",
-          "@media (min-width: 768px)": {
-            display: "none",
-          },
-        }}
-      >
-        {users.map((user) => (
-          <div
-            key={user.id}
-            style={{
-              background: "rgba(2, 37, 34, 0.6)",
-              padding: "16px",
-              borderRadius: "12px",
-              border: "1px solid rgba(255,255,255,0.1)",
-            }}
-          >
-            <div style={{ marginBottom: "12px" }}>
-              <div
-                style={{
-                  fontWeight: "600",
-                  fontSize: "1.1rem",
-                  marginBottom: "4px",
-                }}
-              >
-                {user.name || "No name"}
-              </div>
-              <div
-                style={{
-                  opacity: 0.7,
-                  fontSize: "0.9rem",
-                  wordBreak: "break-all",
-                }}
-              >
-                {user.email}
-              </div>
-            </div>
-
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: "10px",
-                fontSize: "0.9rem",
-              }}
-            >
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <span style={{ opacity: 0.7 }}>Bids</span>
-                <span style={{ fontWeight: "600" }}>{user._count.bids}</span>
-              </div>
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <span style={{ opacity: 0.7 }}>Favorites</span>
-                <span style={{ fontWeight: "600" }}>
-                  {user._count.favorites}
-                </span>
-              </div>
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <span style={{ opacity: 0.7 }}>Deals Leading</span>
-                <span style={{ fontWeight: "600" }}>
-                  {user.leadingDeals || 0}
-                </span>
-              </div>
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <span style={{ opacity: 0.7 }}>Joined</span>
-                <span style={{ fontWeight: "600" }}>
-                  {formatDate(user.createdAt)}
-                </span>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
     </div>
   );
 }
 
-// Composant pour l'onglet Products - Version Mobile
+// Composant pour l'onglet Products
 function ProductsTab({ products }: { products: Product[] }) {
+  // Fonction de formatage des dates
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
+
     const options: Intl.DateTimeFormatOptions = {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
       timeZone: "Europe/Brussels",
     };
+
     return date.toLocaleDateString("fr-FR", options);
   };
 
   return (
     <div>
-      <h2 style={{ marginBottom: "20px", fontSize: "1.5rem" }}>
-        Products Management
-      </h2>
-
-      {/* Version Desktop */}
-      <div
-        style={{
-          display: "none",
-          "@media (min-width: 768px)": {
-            display: "grid",
-            gap: "20px",
-          },
-        }}
-      >
+      <h2 style={{ marginBottom: "30px" }}>Products Management</h2>
+      <div style={{ display: "grid", gap: "20px" }}>
         {products.map((product) => (
           <div
             key={product.id}
@@ -511,7 +372,6 @@ function ProductsTab({ products }: { products: Product[] }) {
                   <span>Category: {product.category}</span>
                   <span>Auctions: {product._count.auctions}</span>
                   <span>Favorites: {product._count.favorites}</span>
-                  <span>Total Bids: {product.totalBids}</span> {/* ← AJOUT */}
                 </div>
               </div>
               <div style={{ fontSize: "0.9rem", opacity: 0.7 }}>
@@ -521,113 +381,21 @@ function ProductsTab({ products }: { products: Product[] }) {
           </div>
         ))}
       </div>
-
-      {/* Version Mobile */}
-      <div
-        style={{
-          display: "grid",
-          gap: "16px",
-          "@media (min_width: 768px)": {
-            display: "none",
-          },
-        }}
-      >
-        {products.map((product) => (
-          <div
-            key={product.id}
-            style={{
-              background: "rgba(2, 37, 34, 0.6)",
-              padding: "16px",
-              borderRadius: "12px",
-              border: "1px solid rgba(255,255,255,0.1)",
-            }}
-          >
-            <div style={{ marginBottom: "12px" }}>
-              <h3 style={{ margin: "0 0 8px 0", fontSize: "1.1rem" }}>
-                {product.name}
-              </h3>
-              <p
-                style={{
-                  margin: "0 0 12px 0",
-                  opacity: 0.8,
-                  fontSize: "0.9rem",
-                  display: "-webkit-box",
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: "vertical",
-                  overflow: "hidden",
-                }}
-              >
-                {product.description}
-              </p>
-            </div>
-
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: "12px 8px",
-                fontSize: "0.85rem",
-                marginBottom: "12px",
-              }}
-            >
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <span style={{ opacity: 0.7 }}>Condition</span>
-                <span style={{ fontWeight: "600" }}>{product.condition}</span>
-              </div>
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <span style={{ opacity: 0.7 }}>Category</span>
-                <span style={{ fontWeight: "600" }}>{product.category}</span>
-              </div>
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <span style={{ opacity: 0.7 }}>Auctions</span>
-                <span style={{ fontWeight: "600" }}>
-                  {product._count.auctions}
-                </span>
-              </div>
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <span style={{ opacity: 0.7 }}>Favorites</span>
-                <span style={{ fontWeight: "600" }}>
-                  {product._count.favorites}
-                </span>
-              </div>
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <span style={{ opacity: 0.7 }}>Total Bids</span> {/* ← AJOUT */}
-                <span
-                  style={{
-                    fontWeight: "600",
-                    color: product.totalBids > 0 ? "#00c9a7" : "inherit",
-                  }}
-                >
-                  {product.totalBids}
-                </span>
-              </div>
-            </div>
-
-            <div
-              style={{
-                fontSize: "0.8rem",
-                opacity: 0.7,
-                borderTop: "1px solid rgba(255,255,255,0.1)",
-                paddingTop: "12px",
-              }}
-            >
-              Created: {formatDate(product.createdAt)}
-            </div>
-          </div>
-        ))}
-      </div>
     </div>
   );
 }
 
-// Composant pour l'onglet Auctions (inchangé)
+// Composant pour l'onglet Auctions
+// Dans app/admin/page.tsx - Composant AuctionsTab complet
 function AuctionsTab({ auctions }: { auctions: any[] }) {
   const [selectedAuction, setSelectedAuction] = useState<any>(null);
   const [allBids, setAllBids] = useState<any[]>([]);
   const [loadingBids, setLoadingBids] = useState(false);
 
+  // Fonctions de formatage des dates
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
+
     const options: Intl.DateTimeFormatOptions = {
       day: "2-digit",
       month: "2-digit",
@@ -636,17 +404,20 @@ function AuctionsTab({ auctions }: { auctions: any[] }) {
       minute: "2-digit",
       timeZone: "Europe/Brussels",
     };
+
     return date.toLocaleString("fr-FR", options);
   };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
+
     const options: Intl.DateTimeFormatOptions = {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
       timeZone: "Europe/Brussels",
     };
+
     return date.toLocaleDateString("fr-FR", options);
   };
 
@@ -670,6 +441,7 @@ function AuctionsTab({ auctions }: { auctions: any[] }) {
   const handleViewAllBids = async (auction: any) => {
     setSelectedAuction(auction);
     setLoadingBids(true);
+
     try {
       const res = await fetch(`/api/admin/auctions/${auction.id}/bids`);
       const data = await res.json();
@@ -689,10 +461,9 @@ function AuctionsTab({ auctions }: { auctions: any[] }) {
 
   return (
     <div>
-      <h2 style={{ marginBottom: "20px", fontSize: "1.5rem" }}>
-        Auctions Management
-      </h2>
+      <h2 style={{ marginBottom: "30px" }}>Auctions Management</h2>
 
+      {/* Overlay/Modal pour toutes les enchères */}
       {selectedAuction && (
         <div
           style={{
@@ -714,50 +485,62 @@ function AuctionsTab({ auctions }: { auctions: any[] }) {
             style={{
               background: "rgba(2, 37, 34, 0.95)",
               borderRadius: "16px",
-              padding: "20px",
+              padding: "30px",
               maxWidth: "800px",
               width: "100%",
               maxHeight: "80vh",
               overflow: "auto",
               border: "1px solid rgba(255,255,255,0.2)",
+              boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
             }}
           >
+            {/* Header du modal */}
             <div
               style={{
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-                marginBottom: "20px",
+                marginBottom: "25px",
+                borderBottom: "1px solid rgba(255,255,255,0.1)",
+                paddingBottom: "15px",
               }}
             >
-              <h3 style={{ margin: 0, color: "#00c9a7" }}>
-                All Bids for {selectedAuction.product.name}
-              </h3>
+              <div>
+                <h2 style={{ margin: 0, color: "#00c9a7" }}>
+                  All Bids for {selectedAuction.product.name}
+                </h2>
+                <p style={{ margin: "5px 0 0 0", opacity: 0.7 }}>
+                  Current Price: {formatPrice(selectedAuction.currentPrice)} •{" "}
+                  {selectedAuction._count.bids} bids total
+                </p>
+              </div>
               <button
                 onClick={closeModal}
                 style={{
                   background: "rgba(255, 107, 107, 0.2)",
                   color: "#ff6b6b",
                   border: "1px solid rgba(255, 107, 107, 0.3)",
-                  padding: "8px 12px",
-                  borderRadius: "6px",
+                  padding: "8px 16px",
+                  borderRadius: "8px",
                   cursor: "pointer",
+                  fontSize: "1rem",
                 }}
               >
-                ✕
+                ✕ Close
               </button>
             </div>
 
+            {/* Liste des enchères */}
             {loadingBids ? (
-              <div style={{ textAlign: "center", padding: "20px" }}>
-                Loading bids...
+              <div style={{ textAlign: "center", padding: "40px" }}>
+                <div>Loading bids...</div>
               </div>
             ) : allBids.length > 0 ? (
               <div
                 style={{
                   display: "flex",
                   flexDirection: "column",
-                  gap: "10px",
+                  gap: "12px",
                 }}
               >
                 {allBids.map((bid, index) => (
@@ -768,44 +551,79 @@ function AuctionsTab({ auctions }: { auctions: any[] }) {
                         index === 0
                           ? "rgba(0, 201, 167, 0.15)"
                           : "rgba(255, 255, 255, 0.05)",
-                      padding: "12px",
-                      borderRadius: "8px",
+                      padding: "16px",
+                      borderRadius: "10px",
                       border:
                         index === 0
-                          ? "1px solid #00c9a7"
+                          ? "2px solid #00c9a7"
                           : "1px solid rgba(255,255,255,0.1)",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
                     }}
                   >
                     <div
                       style={{
                         display: "flex",
-                        justifyContent: "space-between",
                         alignItems: "center",
+                        gap: "15px",
                       }}
                     >
+                      <div
+                        style={{
+                          background:
+                            index === 0 ? "#00c9a7" : "rgba(255,255,255,0.2)",
+                          color: index === 0 ? "#013932" : "white",
+                          width: "32px",
+                          height: "32px",
+                          borderRadius: "50%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: "0.8rem",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {index + 1}
+                      </div>
                       <div>
-                        <div style={{ fontWeight: "600", fontSize: "0.9rem" }}>
+                        <div style={{ fontWeight: "600", marginBottom: "4px" }}>
                           {bid.user.name || bid.user.email}
                           {index === 0 && (
                             <span
-                              style={{ color: "#00c9a7", marginLeft: "8px" }}
+                              style={{
+                                background: "#00c9a7",
+                                color: "#013932",
+                                fontSize: "0.7rem",
+                                padding: "2px 6px",
+                                borderRadius: "10px",
+                                marginLeft: "8px",
+                                fontWeight: "bold",
+                              }}
                             >
-                              👑
+                              👑 WINNING
                             </span>
                           )}
                         </div>
                         <div style={{ fontSize: "0.8rem", opacity: 0.7 }}>
-                          {formatDateTime(bid.createdAt)}
+                          {bid.user.email}
                         </div>
                       </div>
+                    </div>
+
+                    <div style={{ textAlign: "right" }}>
                       <div
                         style={{
-                          fontSize: "1rem",
+                          fontSize: "1.2rem",
                           fontWeight: "bold",
                           color: index === 0 ? "#00c9a7" : "white",
+                          marginBottom: "4px",
                         }}
                       >
                         {formatPrice(bid.amount)}
+                      </div>
+                      <div style={{ fontSize: "0.7rem", opacity: 0.6 }}>
+                        {formatDateTime(bid.createdAt)}
                       </div>
                     </div>
                   </div>
@@ -813,92 +631,133 @@ function AuctionsTab({ auctions }: { auctions: any[] }) {
               </div>
             ) : (
               <div
-                style={{ textAlign: "center", padding: "20px", opacity: 0.6 }}
+                style={{
+                  textAlign: "center",
+                  padding: "40px",
+                  opacity: 0.6,
+                  fontStyle: "italic",
+                }}
               >
-                No bids found
+                No bids found for this auction
+              </div>
+            )}
+
+            {/* Résumé */}
+            {allBids.length > 0 && (
+              <div
+                style={{
+                  marginTop: "25px",
+                  padding: "15px",
+                  background: "rgba(0, 201, 167, 0.1)",
+                  borderRadius: "8px",
+                  border: "1px solid rgba(0, 201, 167, 0.3)",
+                }}
+              >
+                <div
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <div>
+                    <strong>Highest Bid:</strong>{" "}
+                    {formatPrice(allBids[0]?.amount || "0")}
+                  </div>
+                  <div>
+                    <strong>Lowest Bid:</strong>{" "}
+                    {formatPrice(allBids[allBids.length - 1]?.amount || "0")}
+                  </div>
+                  <div>
+                    <strong>Total Bids:</strong> {allBids.length}
+                  </div>
+                </div>
               </div>
             )}
           </div>
         </div>
       )}
 
-      <div style={{ display: "grid", gap: "16px" }}>
+      {/* Liste des enchères principale */}
+      <div style={{ display: "grid", gap: "20px" }}>
         {auctions.map((auction) => (
           <div
             key={auction.id}
             style={{
               background: "rgba(2, 37, 34, 0.6)",
-              padding: "16px",
+              padding: "20px",
               borderRadius: "12px",
               border: "1px solid rgba(255,255,255,0.1)",
             }}
           >
-            <div style={{ marginBottom: "12px" }}>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "start",
-                  marginBottom: "8px",
-                }}
-              >
-                <h3 style={{ margin: 0, fontSize: "1.1rem" }}>
-                  {auction.product.name}
-                </h3>
-                <span
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "start",
+                marginBottom: "15px",
+              }}
+            >
+              <div style={{ flex: 1 }}>
+                <h3 style={{ margin: "0 0 8px 0" }}>{auction.product.name}</h3>
+                <div
                   style={{
-                    background: getStatusColor(auction.status),
-                    color: "#013932",
-                    padding: "4px 8px",
-                    borderRadius: "12px",
-                    fontSize: "0.7rem",
-                    fontWeight: "600",
+                    display: "flex",
+                    gap: "20px",
+                    marginBottom: "12px",
+                    flexWrap: "wrap",
                   }}
                 >
-                  {auction.status}
-                </span>
+                  <span>Start: {formatPrice(auction.startingPrice)}</span>
+                  <span>Current: {formatPrice(auction.currentPrice)}</span>
+                  <span>Bids: {auction._count.bids}</span>
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "15px",
+                    fontSize: "0.9rem",
+                    opacity: 0.8,
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <span>Starts: {formatDateTime(auction.startsAt)}</span>
+                  <span>Ends: {formatDateTime(auction.endsAt)}</span>
+                </div>
               </div>
-
               <div
                 style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: "8px",
-                  fontSize: "0.85rem",
+                  background: getStatusColor(auction.status),
+                  color: "#013932",
+                  padding: "6px 12px",
+                  borderRadius: "20px",
+                  fontSize: "0.8rem",
+                  fontWeight: "600",
+                  whiteSpace: "nowrap",
                 }}
               >
-                <div>
-                  <span style={{ opacity: 0.7 }}>Start: </span>
-                  {formatPrice(auction.startingPrice)}
-                </div>
-                <div>
-                  <span style={{ opacity: 0.7 }}>Current: </span>
-                  {formatPrice(auction.currentPrice)}
-                </div>
-                <div>
-                  <span style={{ opacity: 0.7 }}>Bids: </span>
-                  {auction._count.bids}
-                </div>
+                {auction.status}
               </div>
             </div>
 
+            {/* Section Meilleur Enchérisseur */}
             <div
               style={{
-                background: "rgba(255,255,255,0.05)",
-                padding: "12px",
+                background: "rgba(255, 255, 255, 0.05)",
+                padding: "15px",
                 borderRadius: "8px",
-                marginBottom: "12px",
+                border: "1px solid rgba(255, 255, 255, 0.1)",
               }}
             >
-              <div
+              <h4
                 style={{
+                  margin: "0 0 12px 0",
                   fontSize: "0.9rem",
                   color: "#00c9a7",
-                  marginBottom: "8px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
                 }}
               >
                 👑 Top Bidder
-              </div>
+              </h4>
+
               {auction.topBidder ? (
                 <div
                   style={{
@@ -907,23 +766,29 @@ function AuctionsTab({ auctions }: { auctions: any[] }) {
                     alignItems: "center",
                   }}
                 >
-                  <div style={{ fontSize: "0.85rem" }}>
-                    <div style={{ fontWeight: "600" }}>
+                  <div>
+                    <div style={{ fontWeight: "600", marginBottom: "4px" }}>
                       {auction.topBidder.user.name ||
                         auction.topBidder.user.email}
                     </div>
-                    <div style={{ opacity: 0.7 }}>
-                      {formatDateTime(auction.topBidder.bidAt)}
+                    <div style={{ fontSize: "0.8rem", opacity: 0.7 }}>
+                      {auction.topBidder.user.email}
                     </div>
                   </div>
-                  <div
-                    style={{
-                      fontSize: "1rem",
-                      fontWeight: "bold",
-                      color: "#00c9a7",
-                    }}
-                  >
-                    {formatPrice(auction.topBidder.amount)}
+                  <div style={{ textAlign: "right" }}>
+                    <div
+                      style={{
+                        fontSize: "1.1rem",
+                        fontWeight: "bold",
+                        color: "#00c9a7",
+                        marginBottom: "4px",
+                      }}
+                    >
+                      {formatPrice(auction.topBidder.amount)}
+                    </div>
+                    <div style={{ fontSize: "0.7rem", opacity: 0.6 }}>
+                      {formatDateTime(auction.topBidder.bidAt)}
+                    </div>
                   </div>
                 </div>
               ) : (
@@ -931,7 +796,7 @@ function AuctionsTab({ auctions }: { auctions: any[] }) {
                   style={{
                     textAlign: "center",
                     opacity: 0.6,
-                    fontSize: "0.85rem",
+                    fontStyle: "italic",
                   }}
                 >
                   No bids yet
@@ -939,22 +804,31 @@ function AuctionsTab({ auctions }: { auctions: any[] }) {
               )}
             </div>
 
+            {/* Boutons d'action */}
             {auction.status === "ACTIVE" && (
-              <button
-                onClick={() => handleViewAllBids(auction)}
+              <div
                 style={{
-                  background: "rgba(0, 201, 167, 0.2)",
-                  color: "#00c9a7",
-                  border: "1px solid rgba(0, 201, 167, 0.3)",
-                  padding: "8px 12px",
-                  borderRadius: "6px",
-                  fontSize: "0.8rem",
-                  cursor: "pointer",
-                  width: "100%",
+                  display: "flex",
+                  gap: "10px",
+                  marginTop: "15px",
+                  justifyContent: "flex-end",
                 }}
               >
-                View All Bids ({auction._count.bids})
-              </button>
+                <button
+                  onClick={() => handleViewAllBids(auction)}
+                  style={{
+                    background: "rgba(0, 201, 167, 0.2)",
+                    color: "#00c9a7",
+                    border: "1px solid rgba(0, 201, 167, 0.3)",
+                    padding: "6px 12px",
+                    borderRadius: "6px",
+                    fontSize: "0.8rem",
+                    cursor: "pointer",
+                  }}
+                >
+                  View All Bids ({auction._count.bids})
+                </button>
+              </div>
             )}
           </div>
         ))}

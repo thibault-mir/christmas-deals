@@ -534,6 +534,10 @@ body {
   .nav-menu.nav-menu-open {
     max-height: 420px;
   }
+
+  .nav-menu.nav-menu-open-admin {
+    max-height: 460px;
+  }
 }
 
 /* Desktop: cache la section mobile */
