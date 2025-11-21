@@ -4,6 +4,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { getCachedUser } from "@/lib/cacheUser";
 import Link from "next/link";
 
 interface User {
@@ -128,28 +129,20 @@ export default function AccountPage() {
   };
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch("/api/user/me");
-        if (response.ok) {
-          const data = await response.json();
-          setUser(data.user);
+    const loadUser = async () => {
+      const usr = await getCachedUser();
+      setUser(usr);
 
-          // Récupère les stats utilisateur
-          const statsResponse = await fetch("/api/user/stats");
-          if (statsResponse.ok) {
-            const statsData = await statsResponse.json();
-            setStats(statsData.stats);
-          }
-        }
-      } catch (error) {
-        console.error("Failed to fetch user data:", error);
-      } finally {
-        setLoading(false);
+      if (usr) {
+        const statsRes = await fetch("/api/user/stats");
+        const statsData = await statsRes.json();
+        setStats(statsData.stats);
       }
+
+      setLoading(false);
     };
 
-    fetchUserData();
+    loadUser();
   }, []);
 
   if (loading) {

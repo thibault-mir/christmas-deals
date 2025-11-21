@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { getCachedUser } from "@/lib/cacheUser";
 
 type Condition = "NEW" | "LIKE_NEW" | "VERY_GOOD" | "GOOD" | "USED" | string;
 
@@ -93,21 +94,11 @@ export default function DealCard(props: DealCardProps) {
 
   // Récupère l'utilisateur connecté
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetch("/api/user/me");
-        if (response.ok) {
-          const data = await response.json();
-          setUser(data.user);
-        } else {
-          console.log("User not authenticated");
-        }
-      } catch (error) {
-        console.error("Failed to fetch user:", error);
-      }
+    const loadUser = async () => {
+      const usr = await getCachedUser();
+      setUser(usr);
     };
-
-    fetchUser();
+    loadUser();
   }, []);
 
   // 🔁 Sync quand la prop vient de changer (ex : après /api/favorites)

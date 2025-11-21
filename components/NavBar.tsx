@@ -2,6 +2,7 @@
 "use client";
 
 import Link from "next/link";
+import { getCachedUser } from "@/lib/cacheUser";
 import { useEffect, useState } from "react";
 
 const SECTION_IDS = [
@@ -20,6 +21,7 @@ interface User {
 }
 
 export default function NavBar() {
+  console.log("NAVBAR MOUNTED");
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState<SectionId>("home");
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -30,23 +32,13 @@ export default function NavBar() {
 
   // Récupère l'utilisateur connecté
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetch("/api/user/me");
-        if (response.ok) {
-          const data = await response.json();
-          setUser(data.user);
-        } else {
-          console.log("User not authenticated");
-        }
-      } catch (error) {
-        console.error("Failed to fetch user:", error);
-      } finally {
-        setLoading(false);
-      }
+    const loadUser = async () => {
+      const usr = await getCachedUser();
+      setUser(usr);
+      setLoading(false);
     };
 
-    fetchUser();
+    loadUser();
   }, []);
 
   // Fonction pour vérifier si l'utilisateur est admin
