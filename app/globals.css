@@ -2018,6 +2018,33 @@ body {
   background: rgba(0, 0, 0, 0.6);
 }
 
+.image-btn {
+  margin-top: 40px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border: none;
+  background: rgba(0, 0, 0, 0.35);
+  color: #ffffff; /* ⭐ blanc quand pas favori */
+  border-radius: 999px;
+  width: 32px;
+  height: 32px;
+  line-height: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 0;
+  transition: transform 0.1s ease, background 0.1s ease, opacity 0.1s ease;
+}
+
+/* Hover */
+.image-btn:hover {
+  transform: scale(1.05);
+  background: rgba(0, 0, 0, 0.6);
+}
+
 /* Quand favori → étoile jaune + fond subtil doré */
 .favorite-btn.favorite-active {
   color: #ffd93b; /* ⭐ jaune */
