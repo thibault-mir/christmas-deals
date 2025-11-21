@@ -345,26 +345,26 @@ function UsersTab({ users }: { users: User[] }) {
               }}
             >
               <div>
-                <span style={{ opacity: 0.7 }}>Bids</span>
+                <span style={{ opacity: 0.7 }}>Bids </span>
                 <span style={{ fontWeight: "600" }}>{user._count.bids}</span>
               </div>
 
               <div>
-                <span style={{ opacity: 0.7 }}>Favorites</span>
+                <span style={{ opacity: 0.7 }}>Favorites </span>
                 <span style={{ fontWeight: "600" }}>
                   {user._count.favorites}
                 </span>
               </div>
 
               <div>
-                <span style={{ opacity: 0.7 }}>Deals Leading</span>
+                <span style={{ opacity: 0.7 }}>Deals Leading </span>
                 <span style={{ fontWeight: "600" }}>
                   {user.leadingDeals || 0}
                 </span>
               </div>
 
               <div>
-                <span style={{ opacity: 0.7 }}>Joined</span>
+                <span style={{ opacity: 0.7 }}>Joined </span>
                 <span style={{ fontWeight: "600" }}>
                   {formatDate(user.createdAt)}
                 </span>
@@ -381,66 +381,186 @@ function UsersTab({ users }: { users: User[] }) {
 function ProductsTab({ products }: { products: Product[] }) {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    const options: Intl.DateTimeFormatOptions = {
+    return date.toLocaleDateString("fr-FR", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
       timeZone: "Europe/Brussels",
-    };
-    return date.toLocaleDateString("fr-FR", options);
+    });
   };
 
   return (
     <div>
-      <h2 style={{ marginBottom: "20px", fontSize: "1.5rem" }}>
+      <h2
+        style={{
+          marginBottom: "24px",
+          fontSize: "1.8rem",
+          fontWeight: 600,
+        }}
+      >
         Products Management
       </h2>
 
-      {/* Desktop grid */}
+      {/* DESKTOP */}
       <div className={styles.desktopGrid}>
         {products.map((product) => (
           <div
             key={product.id}
             className={styles.cardBg}
-            style={{ padding: "20px" }}
+            style={{
+              padding: "24px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "16px",
+              marginBottom: "12px",
+            }}
           >
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
+            {/* Header */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "start",
+              }}
+            >
               <div>
-                <h3>{product.name}</h3>
-                <p style={{ opacity: 0.8 }}>{product.description}</p>
+                <h3
+                  style={{
+                    margin: 0,
+                    marginBottom: "8px",
+                    fontSize: "1.4rem",
+                    fontWeight: 600,
+                  }}
+                >
+                  {product.name}
+                </h3>
 
-                <div style={{ display: "flex", gap: "15px" }}>
-                  <span>Condition: {product.condition}</span>
-                  <span>Category: {product.category}</span>
-                  <span>Auctions: {product._count.auctions}</span>
-                  <span>Favorites: {product._count.favorites}</span>
-                  <span>Total Bids: {product.totalBids}</span>
-                </div>
+                <p
+                  style={{
+                    margin: 0,
+                    opacity: 0.8,
+                    fontSize: "0.95rem",
+                    maxWidth: "600px",
+                    lineHeight: "1.4",
+                  }}
+                >
+                  {product.description}
+                </p>
               </div>
+            </div>
 
-              <div style={{ opacity: 0.7 }}>
-                Created: {formatDate(product.createdAt)}
-              </div>
+            {/* Stats badges */}
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "12px",
+                marginTop: "8px",
+              }}
+            >
+              <span
+                style={{
+                  padding: "6px 12px",
+                  background: "rgba(0, 201, 167, 0.15)",
+                  border: "1px solid rgba(0, 201, 167, 0.3)",
+                  borderRadius: "8px",
+                  fontSize: "0.85rem",
+                }}
+              >
+                Condition: <strong>{product.condition}</strong>
+              </span>
+
+              <span
+                style={{
+                  padding: "6px 12px",
+                  background: "rgba(0, 201, 167, 0.15)",
+                  border: "1px solid rgba(0, 201, 167, 0.3)",
+                  borderRadius: "8px",
+                  fontSize: "0.85rem",
+                }}
+              >
+                Category: <strong>{product.category}</strong>
+              </span>
+
+              <span
+                style={{
+                  padding: "6px 12px",
+                  background: "rgba(0, 201, 167, 0.15)",
+                  border: "1px solid rgba(0, 201, 167, 0.3)",
+                  borderRadius: "8px",
+                  fontSize: "0.85rem",
+                }}
+              >
+                Auctions: <strong>{product._count.auctions}</strong>
+              </span>
+
+              <span
+                style={{
+                  padding: "6px 12px",
+                  background: "rgba(0, 201, 167, 0.15)",
+                  border: "1px solid rgba(0, 201, 167, 0.3)",
+                  borderRadius: "8px",
+                  fontSize: "0.85rem",
+                }}
+              >
+                Favorites: <strong>{product._count.favorites}</strong>
+              </span>
+
+              <span
+                style={{
+                  padding: "6px 12px",
+                  background: "rgba(255, 255, 255, 0.1)",
+                  border: "1px solid rgba(255,255,255,0.2)",
+                  borderRadius: "8px",
+                  fontSize: "0.85rem",
+                }}
+              >
+                Total Bids:{" "}
+                <strong
+                  style={{
+                    color: product.totalBids > 0 ? "#00c9a7" : "inherit",
+                  }}
+                >
+                  {product.totalBids}
+                </strong>
+              </span>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Mobile */}
+      {/* MOBILE */}
       <div className={styles.mobileOnly}>
         {products.map((product) => (
           <div
             key={product.id}
             className={styles.cardBg}
-            style={{ padding: "16px" }}
+            style={{
+              padding: "18px",
+              marginBottom: "12px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "14px",
+            }}
           >
-            <h3>{product.name}</h3>
+            <h3
+              style={{
+                margin: 0,
+                fontSize: "1.2rem",
+                fontWeight: 600,
+              }}
+            >
+              {product.name}
+            </h3>
 
             <p
               style={{
+                margin: 0,
                 opacity: 0.8,
+                fontSize: "0.9rem",
+                lineHeight: "1.4",
                 display: "-webkit-box",
-                WebkitLineClamp: 2,
+                WebkitLineClamp: 3,
                 WebkitBoxOrient: "vertical",
                 overflow: "hidden",
               }}
@@ -448,33 +568,49 @@ function ProductsTab({ products }: { products: Product[] }) {
               {product.description}
             </p>
 
+            {/* Grid d’infos */}
             <div
               style={{
                 display: "grid",
                 gridTemplateColumns: "1fr 1fr",
-                gap: "8px",
-                marginBottom: "12px",
+                gap: "10px 12px",
               }}
             >
               <div>
-                Condition: <strong>{product.condition}</strong>
+                <span style={{ opacity: 0.7 }}>Condition</span>
+                <br />
+                <strong>{product.condition}</strong>
               </div>
-              <div>
-                Category: <strong>{product.category}</strong>
-              </div>
-              <div>
-                Auctions: <strong>{product._count.auctions}</strong>
-              </div>
-              <div>
-                Favorites: <strong>{product._count.favorites}</strong>
-              </div>
-              <div>
-                Total Bids: <strong>{product.totalBids}</strong>
-              </div>
-            </div>
 
-            <div style={{ opacity: 0.7 }}>
-              Created: {formatDate(product.createdAt)}
+              <div>
+                <span style={{ opacity: 0.7 }}>Category</span>
+                <br />
+                <strong>{product.category}</strong>
+              </div>
+
+              <div>
+                <span style={{ opacity: 0.7 }}>Auctions</span>
+                <br />
+                <strong>{product._count.auctions}</strong>
+              </div>
+
+              <div>
+                <span style={{ opacity: 0.7 }}>Favorites</span>
+                <br />
+                <strong>{product._count.favorites}</strong>
+              </div>
+
+              <div>
+                <span style={{ opacity: 0.7 }}>Total Bids</span>
+                <br />
+                <strong
+                  style={{
+                    color: product.totalBids > 0 ? "#00c9a7" : "inherit",
+                  }}
+                >
+                  {product.totalBids}
+                </strong>
+              </div>
             </div>
           </div>
         ))}

@@ -48,6 +48,12 @@ function formatCondition(condition: Condition) {
   }
 }
 
+interface User {
+  id: string;
+  email: string;
+  name: string | null;
+}
+
 export default function DealCard(props: DealCardProps) {
   const {
     id,
@@ -82,6 +88,27 @@ export default function DealCard(props: DealCardProps) {
   const [loadingBids, setLoadingBids] = useState(false);
   const [bidsError, setBidsError] = useState<string | null>(null);
   const [hasLoadedBids, setHasLoadedBids] = useState(false);
+
+  const [user, setUser] = useState<User | null>(null);
+
+  // Récupère l'utilisateur connecté
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await fetch("/api/user/me");
+        if (response.ok) {
+          const data = await response.json();
+          setUser(data.user);
+        } else {
+          console.log("User not authenticated");
+        }
+      } catch (error) {
+        console.error("Failed to fetch user:", error);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   // 🔁 Sync quand la prop vient de changer (ex : après /api/favorites)
   useEffect(() => {
@@ -431,29 +458,44 @@ export default function DealCard(props: DealCardProps) {
 
               {!loadingBids && bids.length > 0 && (
                 <div className="history-list">
-                  {bids.map((bid) => (
-                    <div key={bid.id} className="history-item">
-                      <div className="bid-info">
-                        <span className="bid-amount">
-                          {Math.floor(bid.amount)} €
-                        </span>
-                        <span className="bid-user">
-                          {bid.userName ||
-                            bid.userEmail?.split("@")[0] ||
-                            "Anonymous"}
+                  {bids.map((bid) => {
+                    const isMe = user && bid.userEmail === user.email;
+                    return (
+                      <div
+                        key={bid.id}
+                        className={`history-item ${
+                          isMe ? "history-item-you" : ""
+                        }`}
+                      >
+                        <div className="bid-info">
+                          <span
+                            className={`bid-amount ${
+                              isMe ? "bid-amount-you" : ""
+                            }`}
+                          >
+                            {Math.floor(bid.amount)} €
+                          </span>
+                          <span className="bid-user">
+                            {bid.userName ||
+                              bid.userEmail?.split("@")[0] ||
+                              "Anonymous"}{" "}
+                            {isMe && (
+                              <span style={{ color: "#ffd700e6" }}>(You)</span>
+                            )}
+                          </span>
+                        </div>
+                        <span className="bid-date">
+                          {new Date(bid.createdAt).toLocaleString("fr-BE", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "2-digit",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
                         </span>
                       </div>
-                      <span className="bid-date">
-                        {new Date(bid.createdAt).toLocaleString("fr-BE", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "2-digit",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </span>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>

@@ -1919,6 +1919,17 @@ body {
   flex-wrap: wrap; /* Permet le wrap sur mobile */
 }
 
+.history-item-you {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start; /* Aligne en haut pour mobile */
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  border-left: 3px solid #ffd700e6;
+  flex-wrap: wrap; /* Permet le wrap sur mobile */
+}
+
 .bid-info {
   display: flex;
   flex-direction: column;
@@ -1931,6 +1942,12 @@ body {
   font-size: 1rem; /* Plus petit sur mobile */
   font-weight: 700;
   color: #00c9a7;
+}
+
+.bid-amount-you {
+  font-size: 1rem; /* Plus petit sur mobile */
+  font-weight: 700;
+  color: #ffd700e6;
 }
 
 .bid-user {

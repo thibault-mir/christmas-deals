@@ -361,15 +361,6 @@ export default function Homepage() {
 
         {/* DEALS - FOND ROUGE NOËL */}
         <section id="deals" className="section section-deals section-about">
-          {/* {!loadingDeals && deals.length > 0 && (
-            // <ParticlesBackground
-            //   key={`particles-${selectedCategory}-${sortBy}-${visibleDeals.length}`}
-            //   mode="section"
-            //   id="particles-deals"
-            //   density={140}
-            //   size={4}
-            // />
-          )} */}
           <div className="section-inner">
             <h2 className="about-title" style={{ color: "#fff" }}>
               Deals
