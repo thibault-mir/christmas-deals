@@ -42,7 +42,8 @@ export default function NavBar() {
   }, []);
 
   // Fonction pour vérifier si l'utilisateur est admin
-  const isAdmin = user?.email === "thibault.mir@servier.com";
+  const adminEmails = ["thibault.mir@servier.com", "papa@50inside.com"];
+  const isAdmin = adminEmails.includes(user?.email ?? "");
 
   // Fonction pour obtenir l'initial depuis le name ou l'email
   const getUserInitial = () => {
