@@ -232,6 +232,13 @@ export default function DealCard(props: DealCardProps) {
           showHistory ? "history-mode" : ""
         }`}
       >
+        {/* Couronne dans le coin supérieur gauche */}
+        {isLeading && (
+          <div className="leader-crown-badge">
+            <span className="leader-crown">👑</span>
+          </div>
+        )}
+
         {/* Bouton favori en haut à droite */}
         <button
           className={`favorite-btn ${favorite ? "favorite-active" : ""} ${
@@ -278,7 +285,7 @@ export default function DealCard(props: DealCardProps) {
             <div className="deal-card-header">
               <h3 className="deal-card-title">
                 {name}
-                {isLeading && <span className="leader-crown">👑</span>}
+                {/* {isLeading && <span className="leader-crown">👑</span>} */}
               </h3>
               <span className="deal-card-condition">
                 {formatCondition(condition)}

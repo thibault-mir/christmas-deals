@@ -214,6 +214,14 @@ export default function NavBar() {
                 }
               }}
             >
+              <img
+                src="/images/logoff.png"
+                alt="Log Out"
+                style={{
+                  width: "3%",
+                  marginRight: "8px",
+                }}
+              />
               Log Out
             </Link>
           </div>
@@ -256,7 +264,12 @@ export default function NavBar() {
                       }
                     }}
                   >
-                    ⏻ Log Out
+                    <img
+                      src="/images/logoff.png"
+                      alt="Log Out"
+                      style={{ width: "8%" }}
+                    />
+                    Log Out
                   </button>
                 </div>
               )}

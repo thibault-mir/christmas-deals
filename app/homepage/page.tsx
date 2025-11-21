@@ -391,7 +391,7 @@ export default function Homepage() {
                       }
                       onClick={() => setShowOnlyFavorites((prev) => !prev)}
                     >
-                      ⭐ Favorites
+                      ⭐
                     </button>
                     <button
                       type="button"
@@ -415,7 +415,10 @@ export default function Homepage() {
                         }
                         onClick={() => setSelectedCategory(cat)}
                       >
-                        {cat.toLowerCase().replace(/_/g, " ")}
+                        {cat
+                          .toLowerCase()
+                          .replace(/_/g, " ")
+                          .replace(/\b\w/g, (l) => l.toUpperCase())}
                       </button>
                     ))}
                   </div>

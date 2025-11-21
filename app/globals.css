@@ -1087,6 +1087,7 @@ body {
 .deal-card-image-wrapper {
   height: 180px;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .deal-card-image {
@@ -1815,9 +1816,9 @@ body {
 .deal-card-leader-tag {
   padding: 8px 14px;
   border-radius: 999px;
-  border: 1px solid rgba(0, 240, 197, 0.7);
+  border: 1px solid rgba(240, 216, 0, 0.7);
   background: rgba(0, 201, 167, 0.18);
-  color: #00f0c5;
+  color: #ffd700e6;
   font-size: 0.8rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -2043,6 +2044,18 @@ body {
 .image-btn:hover {
   transform: scale(1.05);
   background: rgba(0, 0, 0, 0.6);
+}
+
+.btn-icon-image {
+  width: 20px; /* Ajuste la taille selon tes besoins */
+  height: 20px;
+  object-fit: contain;
+  filter: brightness(0) invert(1); /* Rend l'image blanche */
+  transition: transform 0.2s ease;
+}
+
+.logout-btn:hover .btn-icon-image {
+  transform: scale(1.1);
 }
 
 /* Quand favori → étoile jaune + fond subtil doré */
@@ -3248,4 +3261,25 @@ body {
   margin: 0;
   opacity: 0.9;
   line-height: 1.5;
+}
+
+/* Badge couronne leader */
+.leader-crown-badge {
+  position: absolute;
+  top: 8px;
+  left: 2px;
+  z-index: 2;
+}
+
+.leader-crown {
+  display: inline-block;
+  background: rgba(255, 215, 0, 0.9);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  backdrop-filter: blur(10px);
 }

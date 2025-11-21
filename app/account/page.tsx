@@ -214,7 +214,11 @@ export default function AccountPage() {
                 }
               }}
             >
-              <span className="btn-icon">⏻</span>
+              <img
+                src="/images/logoff_white.png"
+                alt="Log out"
+                className="btn-icon-image"
+              />
               Log Out
             </button>
           </div>
@@ -265,7 +269,7 @@ export default function AccountPage() {
             </div>
             <div className="stat-item clickable" onClick={openFavoritesOverlay}>
               <div className="stat-number">{stats.favorites}</div>
-              <div className="stat-label">Favorites</div>
+              <div className="stat-label">Favorites Bids</div>
             </div>
             <div
               className="stat-item clickable"
@@ -391,7 +395,9 @@ export default function AccountPage() {
                               Your bid: <strong>${item.amount}</strong>
                             </p>
                             <span className="item-date">
-                              {new Date(item.createdAt).toLocaleDateString()}
+                              {new Date(item.createdAt).toLocaleDateString(
+                                "fr-FR"
+                              )}
                             </span>
                           </div>
                         </>
@@ -439,7 +445,10 @@ export default function AccountPage() {
                               <strong>${item.currentPrice}</strong>
                             </p>
                             <span className="item-date">
-                              Ends: {new Date(item.endsAt).toLocaleDateString()}
+                              Ends:{" "}
+                              {new Date(item.endsAt).toLocaleDateString(
+                                "fr-FR"
+                              )}
                             </span>
                           </div>
                         </>

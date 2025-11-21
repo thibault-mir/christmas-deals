@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // app/admin/page.tsx
 "use client";
@@ -15,6 +16,7 @@ interface User {
     bids: number;
     favorites: number;
   };
+  leadingDeals?: number; // ← Nouvelle propriété
 }
 
 interface Product {
@@ -205,17 +207,14 @@ export default function AdminPage() {
 
 // Composant pour l'onglet Users
 function UsersTab({ users }: { users: User[] }) {
-  // Fonction de formatage des dates
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-
     const options: Intl.DateTimeFormatOptions = {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
       timeZone: "Europe/Brussels",
     };
-
     return date.toLocaleDateString("fr-FR", options);
   };
 
@@ -266,6 +265,15 @@ function UsersTab({ users }: { users: User[] }) {
                   borderBottom: "1px solid rgba(255,255,255,0.1)",
                 }}
               >
+                Deals Leading
+              </th>
+              <th
+                style={{
+                  padding: "16px",
+                  textAlign: "left",
+                  borderBottom: "1px solid rgba(255,255,255,0.1)",
+                }}
+              >
                 Joined
               </th>
             </tr>
@@ -288,6 +296,21 @@ function UsersTab({ users }: { users: User[] }) {
                 </td>
                 <td style={{ padding: "16px" }}>{user._count.bids}</td>
                 <td style={{ padding: "16px" }}>{user._count.favorites}</td>
+                <td style={{ padding: "16px" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      color:
+                        user.leadingDeals && user.leadingDeals > 0
+                          ? "#fff"
+                          : "inherit",
+                    }}
+                  >
+                    {user.leadingDeals}
+                  </div>
+                </td>
                 <td style={{ padding: "16px" }}>
                   {formatDate(user.createdAt)}
                 </td>
